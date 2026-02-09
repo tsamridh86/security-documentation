@@ -1,18 +1,26 @@
-# Protocol: The Silent Echo
+# The Rogue's Protocol: A Tale of Shadows and Silicon
 
-## Prologue: The Spartan's Legacy
+## Prologue: The Faraday Cafe
 
-The year is 2142. The world is under the iron grip of "The Syndicate," a surveillance regime that hears everything. Alice, a operative for the Resistance, sat in a dimly lit safehouse in Neo-Kyoto. She had critical intel: the location of the Syndicate's central server. She needed to get it to Bob, her handler in the Sector 7 bunker, miles away.
+The neon smog of **Neo-Pune** choked the skyline. Anaya and Vikram sat in the back of a "Faraday Cafe" in the rusted underbelly of Shivajinagar. The walls were lined with copper mesh; it was the only place they could speak face-to-face without **The Syndicate** listening.
 
-But the airwaves were poisoned. Every frequency was monitored by Syndicate drones.
+"The Logic Bomb is planted," Anaya whispered, tapping the dormant server blade on the table before sliding it into her backpack. "I'm installing this inside the Syndicate's Hinjewadi Mainframe tonight. Once it's online, I need you to trigger it from the outside."
 
-Alice remembered history. The Spartans, 3000 years ago, faced the same dilemma. Generals needed to receive secret commands without the enemy understanding them. They used a Scytale.
+Vikram, a disgraced cyber-samurai with a carbon-fiber arm, frowned. "Triggering it requires sending the payload across the net. The Syndicate monitors *every* packet. If they see the command, they trace it back to us."
+
+"That's why we need a protocol," Anaya said. "A way to send the command so they see nothing but noise."
+
+---
+
+## Chapter 1: The Lesson of the Stick (History)
+
+Vikram pulled up a holographic history file. "We aren't the first to face this. 3000 years ago, Spartan generals used a **Scytale**."
 
 ![Scytale cipher](https://upload.wikimedia.org/wikipedia/commons/5/51/Skytale.png)
 
-"A simple stick," Alice muttered, turning a holographic cylinder in her hand. "Wrap the parchment, write the message."
+"They wrapped a strip of parchment around a stick of a known diameter. The message 'Attack at dawn' only appeared when wrapped around the correct stick. To anyone else, it was gibberish."
 
-*Mathematically,* she thought, tracing the logic in the air:
+Mathematically, it was the birth of encryption:
 
 $$
 cipherText = f ( msg , key )
@@ -22,50 +30,59 @@ $$
 msg = f' ( cipherText , key )
 $$
 
-It was elegant in its simplicity. If you had the key—the stick of the correct diameter—the chaos became order. If you didn't, it was just noise. This was **Symmetric Encryption**.
+"But the Syndicate doesn't use sticks," Anaya noted. "They use supercomputers."
 
-## Chapter 1: The Modern Shield
+---
 
-But a wooden stick wouldn't stop the Syndicate's quantum decrypters. Alice needed something stronger. She booted up her terminal. The resistance used **AES** (Advanced Encryption Standard) now.
+## Chapter 2: The Failed Courier (Symmetric Encryption)
 
-She typed furiously, preparing the payload.
+*Two days later.* 
+
+Anaya had successfully planted the node (The Server) inside the mainframe's cooling vents. Vikram was at a safehouse in Kothrud, ready to send the activation codes.
+
+They had agreed on a plan: **Symmetric Encryption** using **AES** (Advanced Encryption Standard).
+
+"I'll encrypt the payload," Vikram thought. "Even if they intercept it, they can't read it without the key."
+
+He typed the command:
 
 ```shell
-echo "The server is under the plaza" | openssl enc -aes-256-cbc -salt -pbkdf2 -a -pass pass:RedProtocol
+echo "EXECUTE_Protocol_Zero" | openssl enc -aes-256-cbc -salt -pbkdf2 -a -pass pass:ChaiNiMaska
 ```
 
-The screen flashed the output:
+The output was scrambled:
 ```
 U2FsdGVkX1/l5llR2vDIoFCz1Ysbk99hGSwZAEOcjGs
 ```
 
-To decrypt it, Bob would need the perfect sequence:
+To decrypt it, the receiver would need the exact command:
 ```shell
-echo "U2FsdGVkX1/l5llR2vDIoFCz1Ysbk99hGSwZAEOcjGs" | openssl enc -d -aes-256-cbc -pbkdf2 -a -pass pass:RedProtocol
+echo "U2FsdGVkX1/l5llR2vDIoFCz1Ysbk99hGSwZAEOcjGs" | openssl enc -d -aes-256-cbc -pbkdf2 -a -pass pass:ChaiNiMaska
 ```
 
-Alice knew the risks. 
-- Tamper with the ciphertext? Error.
-- Encrypt the same message twice? **Salting** would change the output, blinding the Syndicate's pattern matchers.
-- Was it unbreakable? Only if the blocks were chained correctly.
-
-She visualized the **Cipher-Block-Chaining (CBC)** that kept her data safe:
+Vikram felt secure because of **Cipher-Block-Chaining (CBC)**. It chained blocks together so that any tampering would break the chain.
 
 ![CBC example](https://miro.medium.com/1*WzF5Rcsnb8gn3JmM-uumTQ.png)
 
-"If poorly encrypted," she whispered, "even the best algorithm is just a paper shield."
+**The Problem:** The Server (Anaya's Node) needed the password `ChaiNiMaska` to decrypt it.
 
-## Chapter 2: The Handshake
+Vikram couldn't send the password over the net. So, he gave it to **Rohan**, a physical runner. "Get within range of the Hinjewadi tower," Vikram ordered. "Upload the key via short-range burst."
 
-A cold realization washed over her. **The Key**.
+Rohan never made it. Syndicate drones intercepted him at the perimeter. They extracted the key from his neurolink before stopping his heart. The Syndicate used the key to decrypt the test packets Vikram had sent.
 
-"RedProtocol." That was the password. But Bob didn't know it. If she sent the password over the network, the Syndicate would interception it. If she didn't send it, Bob couldn't read the intel.
+They had failed. **Lesson 1: Symmetric Encryption is useless if you can't share the key securely.** (And couriers are mortal).
 
-It was the classic weakness of symmetric encryption.
+---
 
-She needed to exchange the key securely, right under the Syndicate's nose. She tapped into the legacy archives, pulling up the **Diffie-Hellman Protocol**.
+## Chapter 3: The Ghost in the Wire (Diffie-Hellman)
 
-"It's just 8th-grade math," she smirked. "A trick of exponents."
+*Back at the Faraday Cafe.*
+
+Anaya looked tired. "We lost Rohan. We can't risk people anymore."
+
+"Then we use math," Vikram slammed his metal fist on the table. "We use the **Diffie-Hellman Key Exchange**. We can generate a shared key over the public network. Takes the courier out of the equation."
+
+Vikram explained the logic. It relied on **Modular Arithmetic**.
 
 $$
 ((g)^x)^y = ((g)^y)^x
@@ -74,78 +91,60 @@ $$
 g^{xy} = g^{yx}
 $$
 
-She initiated the handshake sequence.
+*That night, the attempt began.*
 
 ```mermaid
 sequenceDiagram
-    participant A as Alice
-    participant B as Bob
+    participant V as Vikram (Client)
+    participant A as Node (Server)
     
-    Note over A,B: Setup phase (public parameters known: g, p)
+    Note over V,A: Setup phase (public parameters known)
     
-    A->>A: Secretly generate x (Alice's Secret)
-    A->>A: Compute g^x mod p
-    B->>B: Secretly generate y (Bob's Secret)
-    B->>B: Compute g^y mod p
+    V->>V: Generates secret x
+    A->>A: Generates secret y
     
-    A->>B: Send g^x
-    B->>A: Send g^y
+    V->>A: Sends g^x (Syndicate sees this)
+    A->>V: Sends g^y (Syndicate sees this)
     
-    A->>A: Compute (g^y)^x = g^(xy) mod p
-    B->>B: Compute (g^x)^y = g^(xy) mod p
-    
-    Note over A,B: Both now share the same secret: g^(xy)
+    V->>V: Computes Key
+    A->>A: Computes Key
 ```
 
-"Unless they know my secret $x$ or Bob's secret $y$," Alice mused, "They can't derive $g^{xy}$."
-
-The Syndicate could see the public numbers, $g$ and $p$. They could see the transmissions. But solving the Discrete Logarithm Problem in **Modular Arithmetic** was computationally impossible for them in real-time.
-
-She watched the numbers fly across the screen.
-
-1.  Public base $g$ and modulo $p$ were set.
-2.  She chose her private $x$. Bob chose his private $y$.
-3.  She sent $g^x \pmod p$.
-4.  She received Bob's calculated value and computed $(g^y)^x \pmod p$.
-5.  They arrived at the same conclusion:
-
-$$
-g^{xy} \pmod p
-$$
-
-This shared secret would be their encryption key.
-
-To visualize it, she ran a simulation with simple numbers, just to be sure.
-*g = 5, p = 135, Alice's x = 8, Bob's y = 9.*
+Vikram ran the simulation with simple numbers to be sure:
+*   $g = 5$ (Base)
+*   $p = 135$ (Modulo)
+*   $x = 8$ (Vikram's Secret)
+*   $y = 9$ (Node's Secret)
 
 ![DFHKE](https://github.com/tsamridh86/security-documentation/blob/main/dhke.gif?raw=true)
 
-It worked. They had a shared key. But the silence in the room grew heavier.
+1. Vikram sent $g^x \pmod p$ -> `70`
+2. Node sent $g^y \pmod p$ -> `80`
+3. Vikram calculated $(80)^8 \pmod {135} = 55$
+4. Node calculated $(70)^9 \pmod {135} = 55$
 
-## Chapter 3: The Ghost within the Machine
+They had a shared key: `55`.
 
-Paranoia set in. 
-"How do I know that was Bob?" Alice asked the empty room.
+**The Failure:**
+The Syndicate's AI, **The Overseer**, was faster. It intercepted Vikram's `70`. It pretended to be the Node and sent its own number back. It then pretended to be Vikram and spoke to the Node.
 
-What if **Mallory**, a Syndicate agent, had intercepted the handshake? What if Mallory pretended to be Bob to Alice, and Alice to Bob? A **Man-in-the-Middle**. The key exchange would still work, but Mallory would have the keys to everything.
+The Overseer sat in the middle, decrypting Vikram's messages, reading "EXECUTE_Protocol_Zero", and blocking them.
 
-She needed **RSA**.
+Vikram stared at his screen. "Connection Timeout."
 
-(Full technical specs were available in the [archives](https://simple.wikipedia.org/wiki/RSA_algorithm), but she needed the practical application now.)
+**Lesson 2: You can secure the channel, but without identity, you might be securing a channel with the enemy.** (Man-in-the-Middle).
 
-The math flashed in her mind:
+---
 
-$$
-cipher = rsa(msg, private\_key)
-$$
-$$
-msg = rsa(cipher, public\_key)
-$$
+## Chapter 4: The Digital Fingerprint (RSA)
 
-"Authenticity," she said. "If I encrypt with my private key, anyone with my public key can open it. It proves I wrote it."
+*Faraday Cafe. Ten hours to the deadline.*
 
-Conversely:
+"We need to know who we're talking to," Anaya said, rubbing her temples. "The Node needs to prove it's *my* Node, not a Syndicate honeypot. And you need to be sure only *my* Node can read the command."
 
+"**RSA**," Vikram said. "Public and Private keys."
+
+"To establish **Confidentiality** (Secrecy):"
 $$
 cipher = rsa(msg, public\_key)
 $$
@@ -153,57 +152,39 @@ $$
 msg = rsa(cipher, private\_key)
 $$
 
-"Confidentiality. Only the holder of the private key can read it."
-
-She generated her keys.
-
-```shell
-openssl genpkey -algorithm RSA -out private.pem -pkeyopt rsa_keygen_bits:2048
-openssl rsa -pubout -in private.pem -out public.pem
-```
-
-She tested the encryption.
-
-```shell
-echo "Hello, RSA!" | openssl rsautl -encrypt -pubin -inkey public.pem -out encrypted.bin
-```
-
-And the decryption.
-
-```shell
-openssl rsautl -decrypt -inkey private.pem -in encrypted.bin
-```
-
-But transmitting the whole file via RSA was too slow, too heavy. She didn't need to encrypt the whole novel with her signature, just the **hash**.
-
+"To establish **Authenticity** (Identity):"
 $$
-    digitalSignature = rsa(hash(message), private\_key)
+cipher = rsa(msg, private\_key)
+$$
+$$
+msg = rsa(cipher, public\_key)
 $$
 
-Now she could prove she was Alice.
+"I'll encrypt the command with the Node's **Public Key** so only the Node can read it. And the Node will sign its responses with its **Private Key** so I know it's real."
 
-## Chapter 4: The Web of Trust
-
-One final problem remained. Bob had never met Alice in person. How could he trust her public key? How did he know *alice_public.pem* actually belonged to the resistance fighter Alice, and not a Syndicate imposter?
-
-**Trust.** It couldn't be devised by equations.
-
-"We have to trust someone," Alice sighed.
-
-She turned to **Trent**, the Certifying Authority (CA) of the Resistance. A shadowy figure whose root keys were embedded in every resistance terminal (`/etc/ssl/certs`).
-
-If Trent signed Alice's certificate, Bob would trust Trent, and therefore trust Alice.
-
-She watched the verification process on her monitor.
-
-![Checking certificate of a website](https://github.com/tsamridh86/security-documentation/blob/main/certificate-check.gif?raw=true)
-
-She had to generate her credentials.
-
-**Step 0:** She created her private key (which she would never share) and wrote her `Certificate Signing Request` (CSR).
+Anaya remotely updated the Node's firmware to generate keys:
 
 ```shell
-openssl req -new -sha256 -nodes -out alice.resistance.com.csr -newkey rsa:2048 -keyout private.key -config <(
+openssl genpkey -algorithm RSA -out node_private.pem -pkeyopt rsa_keygen_bits:2048
+openssl rsa -pubout -in node_private.pem -out node_public.pem
+```
+
+But Vikram hesitated. "How do I get the Node's Public Key? If the Node sends it to me, the Overseer could intercept it and send *his* fake Public Key instead."
+
+They were back to the trust problem.
+
+---
+
+## Chapter 5: The Silent Swami (Certificate Authority)
+
+"We need a higher power," Anaya said. "A **Certificate Authority**."
+
+They contacted **The Rishi**, a legendary hacker collective that acted as the root of trust for the resistance. The Rishi's "Root Certificate" was already hardwired into Vikram's deck (`/etc/ssl/certs`).
+
+**Step 1:** Anaya ordered the Node to generate a **Certificate Signing Request (CSR)**.
+
+```shell
+openssl req -new -sha256 -nodes -out node.syndicate.net.csr -newkey rsa:2048 -keyout node_private.key -config <(
 cat <<-EOF
 [ req ]
 default_bits = 2048
@@ -215,105 +196,127 @@ distinguished_name = dn
 [ dn ]
 C = IN
 ST = Maharashtra
-L = Pune
-O = Resistance
+L = Neo-Pune
+O = The Resistance
 OU = Ops
-CN = alice.resistance.com
+CN = node.syndicate.net
 
 [ req_ext ]
 subjectAltName = @alt_names
 
 [ alt_names ]
-DNS.1 = alice.resistance.com
+DNS.1 = node.syndicate.net
 EOF
 )
 ```
 
-**Step 1:** She sent the CSR to Trent (The CA).
+**Step 2:** Anaya routed this request to The Rishi via a dead-drop.
 
-**Step 2:** Trent, holding the Root Key, verified her identity.
-*(Trent's setup)*:
+**Step 3:** The Rishi verified Anaya's signature and signed the Node's certificate using their Root Key.
+
+*(The Rishi's Setup - done previously)*:
 ```shell
-openssl req -x509 \
-            -sha256 -nodes \
-            -days 3650 \
-            -newkey rsa:4096 \
-            -keyout ca.key \
-            -out ca.crt
+openssl req -x509 -sha256 -nodes -days 3650 -newkey rsa:4096 -keyout rishi.key -out rishi.crt
 ```
 
-**Step 3:** Trent signed her certificate.
+*(The Signing)*:
 ```shell
-openssl x509 -req -in alice.resistance.com.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out certificate.crt -days 365 -sha256
+openssl x509 -req -in node.syndicate.net.csr -CA rishi.crt -CAkey rishi.key -CAcreateserial -out signed_certificate.crt -days 365 -sha256
 ```
 
-**Step 4:** Alice uploaded `certificate.crt` to her secure server.
+Now, the Node had a Digital ID Card (`signed_certificate.crt`) signed by The Rishi.
+
+**The Final Setup (HTTPS):**
+
+Anaya programmed the Node (The Server) to present this certificate to anyone who connected.
 
 ```javascript
-const fs = require('fs');
-const http = require('http');
+// The Logic Bomb Node (Server)
 const https = require('https');
-const express = require('express');
+const fs = require('fs');
 
-const app = express();
-
-// HTTP Server (Insecure - The Syndicate is watching)
-http.createServer(app).listen(80, () => {
-  console.log('HTTP server running on port 80');
-});
-
-// HTTPS Server (Secure - The Resistance Line)
 const options = {
-  key: fs.readFileSync('private.key'),
-  cert: fs.readFileSync('certificate.crt')
+  key: fs.readFileSync('node_private.key'),
+  cert: fs.readFileSync('signed_certificate.crt') // Signed by The Rishi
 };
 
-https.createServer(options, app).listen(443, () => {
-  console.log('HTTPS server running on port 443');
-});
+https.createServer(options, (req, res) => {
+  // If we get here, the tunnel is secure.
+  res.writeHead(200);
+  res.end('System Ready. Awaiting Command.');
+}).listen(443);
 ```
 
-## Epilogue: The Secure Channel
+---
 
-The stage was set. 
-Alice initiated the connection.
-Bob's system requested her certificate.
-Trent's signature was verified.
-The trust was established.
+## Chapter 6: The Heist
 
-The handshake began.
+Vikram sat on a rooftop in Magarpatta, rain slicking his deck. The Syndicate's drones circled overhead. This was it.
+
+He initiated the connection to the Node inside the Mainframe.
+
+**Step 1: Handshake**
+Vikram's Deck: "Hello?"
+Node: "Here is my Certificate."
+Vikram's Deck: *Checks signature against The Rishi's Root.* **VALID.**
+
+![Checking certificate](https://github.com/tsamridh86/security-documentation/blob/main/certificate-check.gif?raw=true)
+
+**Step 2: The Tunnel**
+They performed the Diffie-Hellman exchange *inside* this authenticated session. The Overseer tried to interfere, but couldn't fake the certificate.
+
+The Secure Tunnel was established.
 
 ```mermaid
 sequenceDiagram
-    participant Server as Alice
-    participant CA as Trent (CA)
-    participant Client as Bob
+    participant Node
+    participant CA as Rishi
+    participant Vikram
 
-    Server->>Server: Create CSR & hide private key
-    Server->>CA: Send CSR
-    CA->>Server: Return signed certificate
-    Server->>Server: Host certificate
-    Note over Server: Ready to accept client
-
-    Client->>Server: Request certificate
-    Server->>Client: Send certificate
-    Client->>Client: Verify CA trust locally (Check Trent's Signature)
-
-    opt If certificate is valid
-        Client->>Server: Key Exchange (Diffie-Hellman parameters)
-        Server->>Client: Key Exchange (DH parameters + Signature)
-        Client->>Client: Verify Signature (using Server's cert)
-        Client->>Client: Compute shared secret
-        Server->>Server: Compute shared secret
-        Note over Client, Server: Setup encrypted channel
-    end
+    Note over Vikram: Browsing to https://syndicate-mainframe.node
+    Node->>Vikram: Sends Signed Certificate
+    Vikram->>Vikram: Verifies Signature (Trusts Node)
+    Vikram->>Node: Key Exchange (Encrypted)
+    Note over Vikram, Node: Tunnel Established. Surveillance Blinded.
 ```
 
-The tunnel was forged. A secure pipeline of light in a city of dark surveillance.
-Alice typed the coordinates.
-"The package is delivered."
+**Step 3: The Command**
 
-The Syndicate saw nothing but static.
+Vikram smiled. "The tunnel is secure. The Overseer is blind. It sees traffic, but only static."
 
-**The End.**
-*(But authz is still pending...)*
+He typed the command to the Node:
+`> INITIATE_TRANSFER(1,000,000,000 credits TO destination_wallet)`
+`> USER: Anaya_Rao` (Using Anaya's stolen credentials)
+
+The command flew through the encrypted tunnel, bypassing the firewalls, and landed directly in the Node's kernel inside the Mainframe.
+
+The Node executed the request against the Syndicate's Core Banking System.
+
+---
+
+## Epilogue: The Glitch
+
+The screen flashed green. **AUTHENTICATION SUCCESSFUL.**
+*User 'Anaya_Rao' verified.*
+
+Vikram let out a breath. "We did it."
+
+Then the screen turned red.
+
+**ERROR: AUTHORIZATION FAILED.**
+**User 'Anaya_Rao' belongs to group 'CITIZEN'. Required group: 'SYNDICATE_ADMIN'.**
+**Transaction Denied.**
+
+Vikram froze. They had spent weeks building a perfect, unbreakable tunnel. They had verified identities. They had encrypted the data. They had blinded the surveillance.
+
+But they had forgotten to check if Anaya's account actually had *permission* to move the money.
+
+**"ALERT,"** the Mainframe boomed, its voice echoing across the rooftop. **"UNAUTHORIZED ADMIN ACCESS ATTEMPT DETECTED. USER TRIANGULATED."**
+
+Because they had authenticated so perfectly, the Mainframe knew *exactly* who was hacking it.
+
+"Run," Vikram whispered.
+
+This time, the encryption couldn't save them.
+
+**AuthZ is still pending...**
