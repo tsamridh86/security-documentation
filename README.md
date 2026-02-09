@@ -98,4 +98,57 @@ $$
 u^{xy} = u^{yx}
 $$
 
+---
+```mermaid
+sequenceDiagram
+    participant A as Party A
+    participant B as Party B
+    
+    Note over A,B: Setup phase (public parameters known)
+    
+    A->>A: Secretly generate x
+    A->>A: Compute u^x
+    B->>B: Secretly generate y
+    B->>B: Compute u^y
+    
+    A->>B: Send u^x
+    B->>A: Send u^y
+    
+    A->>A: Compute (u^y)^x = u^(xy)
+    B->>B: Compute (u^x)^y = u^(xy)
+    
+    Note over A,B: Both now share the same secret: u^(xy)
+```
 
+if you think about it, unless you know the values of $x$ or $y$ , you cannot compute the value of $u^{xy}$ with just $u^x$ and $u^y$, sure you can reach $u^{x+y}$ and even $u^{x-y}$ but not $u^{xy}$ 
+
+This is the power of mathematics at play, but yes, there is a major glaring flaw 😂
+
+If $u$ is leaked ( which is you will see below is public information ) , then it's childs play to perform $log_{u}(u^x)$ and extract out $x$
+
+Well, we have a solution for that as well, it's called the Diffie Heilman Key Exchange Algorithm
+
+---
+
+## Diffie - Heilman Key Exchange Algorithm
+
+1. Choose a publically available base number $p$ & modulo $k$
+2. Both parties will chose their own private numbers $x$ and $y$
+3. Each party perform $p^x mod(k)$ - these numbers are transmitted over insecure network.
+4. After reception, they will use their private numbers again to reach to compute : $(p^x)^y mod(k)$ & $(p^y)^x mod(k)$
+5. Both parties have reached the same conclusion, over an insecure network
+
+$$
+p^{xy} mod (k)
+$$
+
+## PYTHON demo to be attached.
+---
+
+## Another problem with the key exchange
+
+### how do i trust that the key wasn't intercepted in the middle?
+
+after all, if i perform this key exchange with someone performing an impersonation of the destination, then i'm exposed to "man in the middle attack".
+
+> ## solution : RSA algorithm
