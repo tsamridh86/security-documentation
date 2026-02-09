@@ -1,4 +1,5 @@
-# security-documentation
+# the definitive last article that you will need for digital security
+
 Best of my knowledge about digital security in one place!
 
 
@@ -120,17 +121,17 @@ sequenceDiagram
     Note over A,B: Both now share the same secret: u^(xy)
 ```
 
-if you think about it, unless you know the values of $x$ or $y$ , you cannot compute the value of $u^{xy}$ with just $u^x$ and $u^y$, sure you can reach $u^{x+y}$ and even $u^{x-y}$ but not $u^{xy}$ 
+if you think about it - unless you know the values of $x$ or $y$ , you cannot compute the value of $u^{xy}$ with just $u^x$ and $u^y$, sure, you can reach $u^{x+y}$ and even $u^{x-y}$ but not $u^{xy}$ 
 
 This is the power of mathematics at play, but yes, there is a major glaring flaw 😂
 
 If $u$ is leaked ( which is you will see below is public information ) , then it's childs play to perform $log_{u}(u^x)$ and extract out $x$
 
-Well, we have a solution for that as well, it's called the Diffie Heilman Key Exchange Algorithm
+Well, we have a solution for that as well, it's called the Diffie Hellman Key Exchange Algorithm
 
 ---
 
-## Diffie - Heilman Key Exchange Algorithm
+## Diffie - Hellman Key Exchange Algorithm
 
 1. Choose a publically available base number $p$ & modulo $k$
 2. Both parties will chose their own private numbers $x$ and $y$
@@ -141,6 +142,12 @@ Well, we have a solution for that as well, it's called the Diffie Heilman Key Ex
 $$
 p^{xy} mod (k)
 $$
+
+6. this common conclusion that the both parties have reached - will be used as the encryption key for symmetric key encryption.
+
+> note that this is a key exchange, not actual information exchange, you will not be able to transmit actual information with this algorithm alone, it has to be used along with symmetric key encryption for full effect.
+
+---
 
 ## Demo in python with simple numbers
 
@@ -156,14 +163,110 @@ y = 9      # private number of RHS
 
 ![[DFHKE](dfhke.gif)](https://raw.githubusercontent.com/tsamridh86/security-documentation/refs/heads/main/dhke.gif)
 
-1. the 
+1. the LHS sends over 70, not it's secret 8
+2. the RHS sends over 80, not it's secret 9
+3. the LHS then uses the obtained 80 and raises it's power by it's own secret 8 and then the modulo to reach the answer
+4. the RHS then uses the obtained 70 and raises it's power by it's own secret 9 and then the modulo to reach the answer.
+5. both parties reach the same number 55 at the end - this value is to be used as the key for the symmetric key encryption.
+6. this final key is used as the key by both parties.
+
+### Full read up about the algorithm
+> https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange
 
 ---
 
-## Another problem with the key exchange
+## Another problem with the key exchange!
 
 ### how do i trust that the key wasn't intercepted in the middle?
 
 after all, if i perform this key exchange with someone performing an impersonation of the destination, then i'm exposed to "man in the middle attack".
 
 > ## solution : RSA algorithm
+
+---
+
+## RSA Algorithm
+
+full readup is available here : https://simple.wikipedia.org/wiki/RSA_algorithm
+
+internal mathematics have been skipped for now, perhaps another `.md` file in the future.
+
+but mathematically, this is what the rsa algorithm does.
+
+$$
+cipher = rsa ( msg , private key )
+$$
+
+$$
+msg = rsa ( cipher , public key )
+$$
+
+> note that a message encrypted by private key can only be opened by the publically avialable key - this establishes `authenticity` --> only one person on that planet could have written that message.
+
+conversely,
+
+$$
+cipher = rsa ( msg , public key )
+$$
+
+$$
+msg = rsa ( cipher , private key )
+$$
+
+> a message encrypted by the public key can only be opened by the private key - this establishes `integrity` --> only one person in the world will ever read that message.
+
+---
+
+### practical demo
+
+1. generate a private key & public key
+```shell
+openssl genpkey -algorithm RSA -out private.pem -pkeyopt rsa_keygen_bits:2048
+
+open rsa -pubout -in private.pem -out public.pem
+```
+2. Encrypt a message with the public key
+```shell
+echo "Hello, RSA!" | openssl rsautl -encrypt -pubin -inkey public.pem -out encrypted.bin
+```
+3. Have a look at the output
+```shell
+openssl base64 -in encrypted.bin
+```
+4. Decrypt the message with the private key
+```shell
+openssl rsautl -decrypt -inkey private.pem -in encrypted.bin
+```
+---
+
+> **critical thinking** : if i encrypt a message using the private key, and if anyone can decrypt it using the publically available key... why should i waste compute power encrypting large input messages?
+
+>  think at the scale of if you want to prove that you wrote this novel - instead of signing the entire input, you only sign the hash of the input - that's plenty to prove authenticity.
+
+thankfully, people who made `openssl` had the same smart thinking - in `openssl` you can only `sign` a message using the private key, there is no facility to "encrypt" a message using the private key.
+
+this implies,
+
+$$
+    digitialSignature = rsa ( hash ( message ), private key)
+$$
+
+> the command to generate a signature is left as an exercise.
+
+* hashes are also not covered here - perhaps some other day.
+
+with the RSA algorithm, we are able to prove both authenticity and integrity of the message, but... 
+
+---
+
+## if i have never met you, how can I trust that you are who you say you are?
+
+> trust CANNOT be mathematically established
+>>sidetrack : blockchains are "trustless" systems, they agree on a "consensus" ( which is typically an algorith they agree on like proof-of-work ) there is no "trust"
+
+since, "trust" can never be mathematically established : we have to trust someone in the end.
+
+we have a list of people that we trust in the world, their information is stored in `/etc/ssl/certs` directory, these people are called the `CA` : `certifying authority`
+
+if we see the "digital signature" of a trusted CA in a website, then we trust the website.
+
