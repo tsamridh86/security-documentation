@@ -142,7 +142,22 @@ $$
 p^{xy} mod (k)
 $$
 
-## PYTHON demo to be attached.
+## Demo in python with simple numbers
+
+let's observe the key exchange in action with real workable numbers:
+
+assume that :
+```shell
+u = 5      # the base number
+k = 135    # the modulo
+x = 8      # private number of LHS
+y = 9      # private number of RHS
+```
+
+![[DFHKE](dfhke.gif)](https://raw.githubusercontent.com/tsamridh86/security-documentation/refs/heads/main/dhke.gif)
+
+1. the 
+
 ---
 
 ## Another problem with the key exchange
