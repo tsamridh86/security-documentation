@@ -1,26 +1,26 @@
-# the definitive last article that you will need for digital security
+# The definitive guide to digital security
 
-Best of my knowledge about digital security in one place!
+Everything I know about digital security in one place!
 
-
-Digital security for engineering seems daunting and a difficult subject to deal with : this is why I've written this article - to make it accessible to everybody and keep it extremely practical, to actually relate to all the math and the numbers and certificates with real life.
+Digital security for engineering often seems daunting and difficult to deal with. That is why I've written this article: to make it accessible to everybody and keep it extremely practical, relating all the math, numbers, and certificates to real life.
 
 ## History
 
-So, let's begin, let's start the story about 3000 years ago:
-The first instance of encrypted was noted around the era of "Alexander the Great" - because he had a problem : his territories were so large that he couldn't be everywhere at once; he needed to send messages to his trusted generals, so that they are able to execute this commands. 
+So, let's begin the story about 3000 years ago.
 
-However, if this message is intercepted in the middle, then the strategy fails. 
+The first instance of **encryption** was noted around the era of "Alexander the Great". He had a problem: his territories were so large that he couldn't be everywhere at once. He needed to send messages to his trusted generals so they could execute his commands.
 
-Hence, he came up with this rather simple solution :
+However, if a message were intercepted in the middle, the strategy would fail.
+
+Hence, he came up with a rather simple solution:
 
 ![Scytale cipher](https://upload.wikimedia.org/wikipedia/commons/5/51/Skytale.png)
 
-A rope is wrapped around on a stick of a known diameter, then a message is written out on only one line, say "Attack at dawn" and the others are completely gibberish.
-Then the rope is unwrapped and sent to the generals, unless you have the stick with the same diameter as the original, there is no chance that you are going to read the message ( well, at least 3000 years ago when there were no computers and education was not common ).
+A rope is wrapped around a stick of a known diameter. A message is then written on only one line, say "Attack at dawn," while the other lines contain gibberish.
+When the rope is unwrapped, it appears as random letters. Unless you have a stick with the same diameter as the original (the "key"), there is no chance you are going to read the message (well, at least 3000 years ago when computers didn't exist).
 
 
-But let us observe what happened there,
+Let us observe what happened there.
 
 Mathematically,
 
@@ -32,29 +32,29 @@ $$
 msg = f' ( cipherText , key )
 $$
 
-The above technique, had a "function" that would convert the readable message to an unreadable message for a normal person, however, if you have a key, then this "cipher text" can be recovered to the original message.
+The above technique used a "function" that would convert the readable message into an unreadable format for a normal person. However, if you have the key, then this "ciphertext" can be recovered to the original message.
 
 
-This method of converting a message to an unreadable format unless you have a key is known as **"encryption"** & if you have a singular key that does the encryption & decryption it's known as **"symmetric encryption"**
-
----
-
-Remember, these key differences :
-
-
-- **encryption** : is the activity to mutate ( encrypt ) your data such that even though if it's left in public, then only the person with the key should be able to read ( decrypt ) it.
-- **encoding** : is just a translation from one characters to another - this is typically done to avoid special characters, esp. in scenarios where new characters are unsupported. e.g., using emoji's in legacy database "😂" emoji is encoded to : U+1F602 to store in legacy database and the frontend will take the headache of converting it back to emoji 😂.
-- **steganography** : is the activity where your data is hidden amongst other larger set of data.
-
-this article will stick to encryption - no usage of encoding or steganography here!
+This method of converting a message to an unreadable format is known as **"encryption"**. If you have a singular key that does both the encryption and decryption, it's known as **"symmetric encryption"**.
 
 ---
 
-## Example of modern symmetric encryptions 
+Remember these key differences:
 
-Of course the scytale cipher isn't complex to break anymore, but we do use better symmetric encryption algorithms now. The most popular one is AES ( Advanced Encryption Standard ).
 
-### Encryption :
+- **Encryption**: The activity of mutating (encrypting) your data so that even if it's public, only the person with the key can read (decrypt) it.
+- **Encoding**: A translation from one set of characters to another. This is typically done to avoid special characters, especially where new characters are unsupported. For example, using emojis in a legacy database: the "😂" emoji might be encoded to `U+1F602` to store it, and the frontend handles converting it back to "😂".
+- **Steganography**: The activity of hiding data within another larger set of data.
+
+This article will stick to **encryption**—no encoding or steganography here!
+
+---
+
+## Example of modern symmetric encryption
+
+Of course, the scytale cipher isn't complex to break anymore, but we use better symmetric encryption algorithms now. The most popular one is **AES** (Advanced Encryption Standard).
+
+### Encryption:
 
 ```shell
 echo "your message" | openssl enc -aes-256-cbc -salt -pbkdf2 -a -pass pass:yourkey
@@ -72,9 +72,9 @@ echo "U2FsdGVkX1/l5llR2vDIoFCz1Ysbk99hGSwZAEOcjGs" | openssl enc -d -aes-256-cbc
 
 ### Points to note and experiment
 
-- tampering the key or the cipher text will always lead to an error.
-- in modern encrpytion algorithms, attempting the same encrpytion repeatedly. i.e., using the same key & message may still lead to different output - this trick is known as `salting` - this will not be covered in this article, perhaps another `.md` file.
-- modern encryption algorithms, "chain" blocks due to advanced pattern recoginition software that is available now, this trick is known as `cipher-block-chaining` , or `CBC` e.g.,
+- Tampering with the key or the ciphertext will always lead to an error.
+- In modern encryption algorithms, attempting the same encryption repeatedly (i.e., using the same key & message) may still lead to different output. This is due to `salting`, which prevents attackers from seeing patterns.
+- Modern encryption algorithms "chain" blocks together to prevent pattern analysis. This is known as `Cipher-Block-Chaining` or `CBC`. For example:
 
 
   ![CBC example](https://miro.medium.com/1*WzF5Rcsnb8gn3JmM-uumTQ.png)
@@ -85,12 +85,11 @@ If poorly encrypted, then even the best algorithm can't help!
 
 ## Main weakness of symmetric encryption
 
-> that KEY - it needs to be transferred securely, if the key is leaked then the entire exchange is compromised.
+> **The KEY**. It needs to be transferred securely. If the key is leaked, the entire exchange is compromised.
 
-### how then, shall we securely exchange a key when the messenger is unreliable?
+### How then shall we securely exchange a key when the messenger is unreliable?
 
-> by using a 8th standard mathematical trick.
-
+> By using a mathematical trick involving 8th standard math.
 
 $$
 ((u)^x)^y = ((u)^y)^x
@@ -121,39 +120,39 @@ sequenceDiagram
     Note over A,B: Both now share the same secret: u^(xy)
 ```
 
-if you think about it - unless you know the values of $x$ or $y$ , you cannot compute the value of $u^{xy}$ with just $u^x$ and $u^y$, sure, you can reach $u^{x+y}$ and even $u^{x-y}$ but not $u^{xy}$ 
+If you think about it, unless you know the values of $x$ or $y$, you cannot compute the value of $u^{xy}$ with just $u^x$ and $u^y$. Sure, you can reach $u^{x+y}$ and even $u^{x-y}$, but not $u^{xy}$.
 
-This is the power of mathematics at play, but yes, there is a major glaring flaw 😂
+This is the power of mathematics at play, but yes, there is a major glaring flaw. 😂
 
-If $u$ is leaked ( which is you will see below is public information ) , then it's childs play to perform $log_{u}(u^x)$ and extract out $x$
+If $u$ is leaked (which, as you will see below, is public information), then it's child's play to perform $\log_{u}(u^x)$ and extract $x$.
 
-Well, we have a solution for that as well, it's called the Diffie Hellman Key Exchange Algorithm
-
----
-
-## Diffie - Hellman Key Exchange Algorithm
-
-1. Choose a publically available base number $p$ & modulo $k$
-2. Both parties will chose their own private numbers $x$ and $y$
-3. Each party perform $p^x mod(k)$ - these numbers are transmitted over insecure network.
-4. After reception, they will use their private numbers again to reach to compute : $(p^x)^y mod(k)$ & $(p^y)^x mod(k)$
-5. Both parties have reached the same conclusion, over an insecure network
-
-$$
-p^{xy} mod (k)
-$$
-
-6. this common conclusion that the both parties have reached - will be used as the encryption key for symmetric key encryption.
-
-> note that this is a key exchange, not actual information exchange, you will not be able to transmit actual information with this algorithm alone, it has to be used along with symmetric key encryption for full effect.
+Well, we have a solution for that as well. It's called the **Diffie-Hellman Key Exchange Algorithm**, and it relies on **Modular Arithmetic**. In modular arithmetic, reversing this operation (the Discrete Logarithm Problem) is incredibly difficult.
 
 ---
 
-## Demo in python with simple numbers
+## Diffie-Hellman Key Exchange Algorithm
 
-let's observe the key exchange in action with real workable numbers:
+1. Choose a publicly available base number $p$ & modulo $k$.
+2. Both parties choose their own private numbers $x$ and $y$.
+3. Each party performs $p^x \pmod k$. These numbers are transmitted over an insecure network.
+4. After reception, they use their private numbers again to compute: $(p^x)^y \pmod k$ & $(p^y)^x \pmod k$.
+5. Both parties have reached the same conclusion over an insecure network:
 
-assume that :
+$$
+p^{xy} \pmod k
+$$
+
+6. This common conclusion that both parties have reached will be used as the **encryption key** for symmetric key encryption.
+
+> **Note**: This is a key exchange, not an actual information exchange. You generally cannot transmit actual information with this algorithm alone. It has to be used along with symmetric key encryption for full effect.
+
+---
+
+## Demo in Python with simple numbers
+
+Let's observe the key exchange in action with real workable numbers.
+
+Assume that:
 ```shell
 u = 5      # the base number
 k = 135    # the modulo
@@ -161,14 +160,13 @@ x = 8      # private number of LHS
 y = 9      # private number of RHS
 ```
 
-![[DFHKE](dfhke.gif)](https://raw.githubusercontent.com/tsamridh86/security-documentation/refs/heads/main/dhke.gif)
+![DFHKE](https://github.com/tsamridh86/security-documentation/blob/main/dhke.gif?raw=true)
 
-1. the LHS sends over 70, not it's secret 8
-2. the RHS sends over 80, not it's secret 9
-3. the LHS then uses the obtained 80 and raises it's power by it's own secret 8 and then the modulo to reach the answer
-4. the RHS then uses the obtained 70 and raises it's power by it's own secret 9 and then the modulo to reach the answer.
-5. both parties reach the same number 55 at the end - this value is to be used as the key for the symmetric key encryption.
-6. this final key is used as the key by both parties.
+1. The LHS sends over `70`, not its secret `8`.
+2. The RHS sends over `80`, not its secret `9`.
+3. The LHS then uses the obtained `80`, raises it to the power of its own secret `8`, and then applies the modulo to reach the answer.
+4. The RHS then uses the obtained `70`, raises it to the power of its own secret `9`, and then applies the modulo to reach the answer.
+5. Both parties reach the same number `55` at the end—this value is to be used as the key for symmetric key encryption.
 
 ### Full read up about the algorithm
 > https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange
@@ -177,96 +175,99 @@ y = 9      # private number of RHS
 
 ## Another problem with the key exchange!
 
-### how do i trust that the key wasn't intercepted in the middle?
+### How do I trust that the key wasn't intercepted in the middle?
 
-after all, if i perform this key exchange with someone performing an impersonation of the destination, then i'm exposed to "man in the middle attack".
+After all, if I perform this key exchange with someone impersonating the destination, then I'm exposed to a **"man-in-the-middle attack"**.
 
-> ## solution : RSA algorithm
+> **Solution: RSA Algorithm**
 
 ---
 
 ## RSA Algorithm
 
-full readup is available here : https://simple.wikipedia.org/wiki/RSA_algorithm
+A full read-up is available here: https://simple.wikipedia.org/wiki/RSA_algorithm
 
-internal mathematics have been skipped for now, perhaps another `.md` file in the future.
+Internal mathematics have been skipped for now.
 
-but mathematically, this is what the rsa algorithm does.
-
-$$
-cipher = rsa ( msg , private key )
-$$
+Mathematically, this is what the RSA algorithm does:
 
 $$
-msg = rsa ( cipher , public key )
-$$
-
-> note that a message encrypted by private key can only be opened by the publically avialable key - this establishes `authenticity` --> only one person on that planet could have written that message.
-
-conversely,
-
-$$
-cipher = rsa ( msg , public key )
+cipher = rsa(msg, private\_key)
 $$
 
 $$
-msg = rsa ( cipher , private key )
+msg = rsa(cipher, public\_key)
 $$
 
-> a message encrypted by the public key can only be opened by the private key - this establishes `integrity` --> only one person in the world will ever read that message.
+> **Note**: A message encrypted by a private key can only be opened by the publicly available key. This establishes **Authenticity** -> Only one person on the planet could have written that message.
+
+Conversely,
+
+$$
+cipher = rsa(msg, public\_key)
+$$
+
+$$
+msg = rsa(cipher, private\_key)
+$$
+
+> **Note**: A message encrypted by the public key can only be opened by the private key. This establishes **Confidentiality** -> Only one person in the world will ever read that message.
 
 ---
 
-### practical demo
+### Practical demo
 
-1. generate a private key & public key
+1. Generate a private key & public key:
 ```shell
 openssl genpkey -algorithm RSA -out private.pem -pkeyopt rsa_keygen_bits:2048
 
-open rsa -pubout -in private.pem -out public.pem
+openssl rsa -pubout -in private.pem -out public.pem
 ```
-2. Encrypt a message with the public key
+2. Encrypt a message with the public key:
 ```shell
 echo "Hello, RSA!" | openssl rsautl -encrypt -pubin -inkey public.pem -out encrypted.bin
 ```
-3. Have a look at the output
+3. Have a look at the output:
 ```shell
 openssl base64 -in encrypted.bin
 ```
-4. Decrypt the message with the private key
+4. Decrypt the message with the private key:
 ```shell
 openssl rsautl -decrypt -inkey private.pem -in encrypted.bin
 ```
 ---
 
-> **critical thinking** : if i encrypt a message using the private key, and if anyone can decrypt it using the publically available key... why should i waste compute power encrypting large input messages?
+> **Critical Thinking**: If I encrypt a message using the private key, and anyone can decrypt it using the publicly available key... why should I waste compute power encrypting large input messages?
 
->  think at the scale of if you want to prove that you wrote this novel - instead of signing the entire input, you only sign the hash of the input - that's plenty to prove authenticity.
+> **Answer**: Think at the scale of proving authorship used in signing. If you want to prove that you wrote a novel, you don't need to sign the entire text. Instead, you only sign the **hash** of the input. That's plenty to prove **authenticity**.
 
-thankfully, people who made `openssl` had the same smart thinking - in `openssl` you can only `sign` a message using the private key, there is no facility to "encrypt" a message using the private key.
+Thankfully, the creators of `openssl` had the same smart thinking. In `openssl`, you can only **sign** a message using the private key; there is no facility to "encrypt" a message using the private key (which is effectively signing).
 
-this implies,
+This implies:
 
 $$
-    digitialSignature = rsa ( hash ( message ), private key)
+    digitalSignature = rsa(hash(message), private\_key)
 $$
 
-> the command to generate a signature is left as an exercise.
+> The command to generate a signature is left as an exercise.
 
-* hashes are also not covered here - perhaps some other day.
+*Hashes are also not covered here—perhaps some other day.*
 
-with the RSA algorithm, we are able to prove both authenticity and integrity of the message, but... 
+With the RSA algorithm, we are able to prove both authenticity and confidentiality of the message, but... 
 
 ---
 
-## if i have never met you, how can I trust that you are who you say you are?
+## If I have never met you, how can I trust that you are who you say you are?
 
-> trust CANNOT be mathematically established
->>sidetrack : blockchains are "trustless" systems, they agree on a "consensus" ( which is typically an algorith they agree on like proof-of-work ) there is no "trust"
+> **Trust CANNOT be mathematically established.**
+>
+> *Sidetrack*: Blockchains are "trustless" systems. They agree on a "consensus" (typically via an algorithm like proof-of-work), so there is no need for "human trust".
 
-since, "trust" can never be mathematically established : we have to trust someone in the end.
+Since "trust" can never be mathematically established, we have to trust someone in the end.
 
-we have a list of people that we trust in the world, their information is stored in `/etc/ssl/certs` directory, these people are called the `CA` : `certifying authority`
+We have a list of people that we trust in the world. Their information is stored in the `/etc/ssl/certs` directory (or similar). These entities are called **CAs** (**Certifying Authorities**).
 
-if we see the "digital signature" of a trusted CA in a website, then we trust the website.
+If we see the "digital signature" of a trusted CA on a website, then we trust the website.
+
+![Checking certificate of a website](https://github.com/tsamridh86/security-documentation/blob/main/certificate-check.gif?raw=true)
 
