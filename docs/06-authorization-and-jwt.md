@@ -3,7 +3,26 @@
 > **Authentication (AuthN)** is establishing *who* you are.
 > **Authorization (AuthZ)** is establishing *what* you can do.
 
-Up until now, we've mostly discussed encryption and trust (Authentication). Now, let's look at how we manage permissions.
+Up until now, we've mostly discussed encryption and trust (Authentication). Now, let's look at how we manage permissions. But before we dive into technical details, let's first understand statelessness and statefulness.
+
+
+
+## Stateful vs. Stateless Applications
+
+### Stateful Applications
+In a stateful architecture, the server is responsible for tracking the state of a client's interaction. This usually involves storing data about the current session in a database or cache (like Redis) and associating it with a unique identifier sent to the client.
+*   **Example:** A shopping cart on an e-commerce site. When you add an item, the server stores that state in its memory or a database. As you navigate between pages, the server uses your session ID to retrieve your specific cart, ensuring your items remain saved.
+
+
+*   **The Scaling Problem:** Every incoming request requires a lookup to retrieve the state, which can introduce latency. In a distributed system, maintaining a synchronized state across multiple servers or regions becomes a complex infrastructure challenge, often requiring "sticky sessions" or a shared data store.
+
+### Stateless Applications
+Statelessness means the server does not store any information about the client's previous requests. Each request must contain all the information necessary for the server to process it.
+
+*   **Why we use it:** It enables effortless horizontal scaling. Because the server doesn't need to remember anything between requests, any instance of the application can handle any request. This decoupling is essential for microservices and high-concurrency environments where performance and reliability are critical.
+
+
+
 
 ---
 

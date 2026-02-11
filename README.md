@@ -43,10 +43,9 @@ I have split the guide into focused chapters to make it easier to digest. You ca
    - Certificate Authorities (CAs) and CSRs
    - The full HTTPS Handshake workflow
 
-### [6. Authorization & JWTs](./docs/06-authorization-and-jwt.md)
+### [6. Authorization & JWTs](./docs/06-authorization-and-jwt.md) - still under construction! not added to the story yet!
    - Symmetric vs Asymmetric Signatures
    - Why JWT? (Statelessness)
    - Roles, Permissions & Annotation-based Security
 
 ---
-*AuthZ is still pending 😉*
