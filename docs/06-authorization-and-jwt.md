@@ -3,7 +3,13 @@
 > **Authentication (AuthN)** is establishing *who* you are.
 > **Authorization (AuthZ)** is establishing *what* you can do.
 
-Up until now, we've mostly discussed encryption and trust (Authentication). Now, let's look at how we manage permissions. But before we dive into technical details, let's first understand statelessness and statefulness.
+Up until now, we've battled through encryption, trust, and handshakes (Authentication). You've proven *who* you are.
+
+But just because you have an ID card, does it mean you can walk into the CEO's office? Or the server room? Or the vault?
+
+That is the job of **Authorization**. It decides *where you can go* and *what you can do*.
+
+But before we hand out the keys to the castle, we need to understand a fundamental architectural choice: **Stateful vs. Stateless**.
 
 
 
@@ -45,41 +51,46 @@ To achieve statelessness, the client must take responsibility for holding the ne
 
 Instead of the server maintaining a list of active sessions or interactions, it issues a token to the client. The client stores this token (usually in `localStorage` or an `HttpOnly` cookie) and attaches it to every subsequent request. This allows the server to process the request immediately using only the information provided in the token, without needing to query a central database for the user's current state.
 
-An alarm bell might go off if your mind is already whirring with questions like when i apply this to a authz scenario, then :
+An alarm bell might go off if your mind is already whirring with questions like, "When I apply this to an AuthZ scenario, then...":
 
-> "What if the token is modified by the client themselves" 
+> *"What if the token is modified by the client themselves?"*
 
 or 
-> "What if the token is stolen?" 
+
+> *"What if the token is stolen?"*
 
 or
-> "How do we invalidate a token?".
 
-The answer to above problems is to use a special type of token called a **JWT** (JSON Web Token).
+> *"How do we invalidate a token?"*
+
+The answer to the above problems is to use a special type of token called a **JWT** (JSON Web Token).
 
 ## JWT
-A "Token" is a broad concept. It could be a random string of characters, an encrypted blob, or a json body but JWT is a special type of token that is compact, URL-safe, and can be used to represent claims to be transferred between two parties.
+A "Token" is a broad concept. It could be a random string of characters, an encrypted blob, or a JSON body. A **JWT** is a special type of token that is compact, URL-safe, and can be used to transfer information between two or more parties without being tampered.
 
 
-> **JWT has a lot of benefits, but the main power of JWT is that it cannot be tampered!**
+Basically, it's a JSON object that is digitally signed.
+
+> **Think of the signature as a wax seal on a royal decree.**
+> Any peasant can read the decree, but if they try to change a single letter, the seal breaks. The server is the only one with the signet ring to create a valid seal.
 
 ---
 
-## Creating a Token & Play around with it
+## Creating a Token & Playing around with it
 
-Go to the website [jwt.io](https://jwt.io)
+Go to the website [jwt.io](https://jwt.io).
 
-Immediately, you will be thrown into the "decoder" page - this is to debug an existing token ( which we will do so later) but we are here to create a token, so let's click on the "encoder" tab.
+Immediately, you will be thrown into the "decoder" page—this is to debug an existing token (which we will do later). But we are here to create a token, so let's look at the interface.
 
-You will see 3 sections here :
+You will see 3 sections here:
 
-1. **Header**: Algorithm & Token Type. ( Do not tamper this for now)
-2. **Payload**: The data (Claims) - you can fill this up with any json body you wish.
-3. **Sign JWT: Secret**: You are supposed to fill this up with a secret key. 
+1. **Header**: Algorithm & Token Type (Do not tamper with this for now).
+2. **Payload**: The data (Claims) - you can fill this in with any JSON body you wish.
+3. **Verify Signature**: You are supposed to fill this in with a secret key. 
 
-Once you fill up the above sections, you will see a token generated.
+Once you fill in the above sections, you will see a token generated.
 
-This has 3 parts separated by dots (`.`):
+This new "token" has 3 parts separated by dots (`.`):
 
 1. **Header**: Algorithm & Token Type.
 2. **Payload**: The data (Claims).
@@ -96,11 +107,11 @@ $$
 
 This is the most simple JWT token that you can create.
 
-You create the token, which has the "state" of the client. The client stores this token and sends it with every request. If the client modifies it you will get to know immediately!
+You create the token, which encapsulates the "state" of the client. The client stores this token and sends it with every request. If the client modifies it, you will know immediately!
 
-> You can have your friend create a JWT token and you can place it in the **decoder** section now. Although you can read what he had kept in the body, you cannot modify it. If you return the same token to your friend, he will know if you have modified it. 
+> You can have a friend create a JWT and place it in the **decoder** section. Although you can read what they kept in the body, you cannot modify it. If you return the modified token to your friend, they will know if you have tampered with it.
 
-**This strongly implies, you should NEVER store any sensitive information in the token.**
+**This strongly implies: you should NEVER store any sensitive information in the token.**
 
 ---
 
@@ -108,38 +119,38 @@ You create the token, which has the "state" of the client. The client stores thi
 
 To understand "stateless," we must first look at the "stateful" alternative: **Sessions**.
 
-**1. The Stateful Way (Sessions)**
-Imagine a club with a guest list.
-- When you enter, the bouncer checks your ID and writes your name on a list inside the club (The Database/Redis).
-- He gives you a simple ticket number `#123` (Session ID).
-- Every time you want a drink, show ticket `#123`.
-- The bartender must walk to the entrance, check the list for `#123`, see that it belongs to "Samridh", and then serve you.
-- **Problem**: If the club gets huge and you add 10 bartenders (10 servers), they all need to check that ONE list. The list becomes a bottleneck.
+**1. The Stateful Way (The Amnesiac Receptionist with a Ledger)**
+Imagine a club where the bouncer has zero memory of faces.
+- When you enter, he writes your name in a giant ledger: "Samridh is inside."
+- He hands you a ticket `#123`.
+- You want a drink? Show ticket `#123`.
+- The bartender runs to the door, checks the ledger for `#123`, confirms it's Samridh, and pours the drink.
+- **The Problem:** If the club gets huge and you have 10 bartenders, they all need to constantly check that *one* ledger. The line at the ledger becomes your bottleneck.
 
-**2. The Stateless Way (JWT)**
-Imagine a club with stamped wristbands.
-- When you enter, the bouncer checks your ID.
-- He stamps a **detailed wristband** (The JWT) that says: *"Name: Samridh, Status: VIP, Valid until: 4 AM"*.
-- He then **signs** it with an invisible ink that only staff can verify (The Digital Signature).
-- Now, when you want a drink, you just show the wristband.
-- The bartender checks the signature (is it real?) and reads the details directly from your wrist.
-- **Benefit**: The bartender *never* needs to check a central list. You can have 1,000 bartenders across 5 floors, and none of them need to talk to each other.
+**2. The Stateless Way (The VIP Wristband)**
+This time, the bouncer still has amnesia, but he's smarter.
+- When you enter, he checks your ID.
+- He doesn't write anything down. Instead, he stamps a **detailed wristband** (The JWT) that says: *"Name: Samridh, Status: VIP, Valid until: 4 AM"*.
+- He puts a special **holographic seal** on it that only staff can verify (The Signature).
+- You want a drink? Show the wristband.
+- The bartender checks the seal (is it real?) and reads: "Ah, VIP Samridh. Here's your drink."
+- **Benefit:** The bartender *never* needs to talk to the bouncer or check a central list. You can have 1,000 bartenders across 5 floors, and they can all work independently. This is infinite scalability.
 
 > **Statelessness** means the server does not need to remember you. You bring your own credentials (state) with every single request.
 
 ---
 
-## Side quest 2 
+## Side Quest 2: Asymmetric Keys
 
-> You didn't allow me to tamper the first section of the token. Why?
+> You didn't allow me to tamper with the first section of the token. Why?
 
-The answer is : too keep things simple for now. Let's complicate our lives a bit.
+The answer: It was to keep things simple until now. Now let's complicate our lives a bit.
 
-So far, we have proven that JWT can be handed out to anyone and only YOU can tell apart if it's been modified or not. 
+So far, we have proven that a JWT can be handed out to anyone and only **YOU** can tell if it's been modified.
 
-> But what if you want multiple people to verify that token hasn't been modified?
+> But what if you want *multiple people* to verify that the token hasn't been modified?
 
-This is where you will change the first section, but default, it must show these values 
+This is where you will change the first section. By default, it shows these values:
 
 ```json
 {
@@ -157,26 +168,25 @@ modify it to
 }
 ```
 
-The third section will automatically changes from `secret key` to `private key`.
+The third section will automatically change from `secret key` to `private key`.
 
-Plugin a private key that you had learnt to create from [chapter 3](./03-asymmetric-cryptography.md). 
+Plug in a private key that you learned to create in [Chapter 3](./03-asymmetric-cryptography.md). 
 
-You will see that a new token is generated, if you move this to the decoder section now, then you will need a public key to verify it now.
+You will see that a new token is generated. If you move this to the "decoder" section, you will need a public key to verify it.
 
-So, this is what you do :
+So, this is what you do:
 
-1. Generate the JWT token using your private key.
+1. Generate the JWT using your private key.
 2. Send it to your client.
 3. Put your public key in a well known place e.g., `https://your.company.com/.well-known/jwks.json`.
 4. Now your friend who runs a different company can be sure that the token was generated by you and not by someone else.
 
-These is extremely handy in microservices architecture as well as in multi-functional organization. 
+This is extremely handy in microservices architecture as well as in multi-functional organizations. 
 
-e.g.,
+For example:
+You can log in to the core banking website and then switch to its insurance section with the same token; you will not be required to log in over and over again. 😁
 
-you can login into the core banking website and then you can switch to it's insurance section with the same token, you will not require to login over and over again. 😁
-
-Congratulations, you just learnt **Asymmetric JWT**!
+Congratulations, you just learned **Asymmetric JWT**!
 
 ---
 
@@ -185,7 +195,7 @@ Congratulations, you just learnt **Asymmetric JWT**!
 
 > *RBAC stands for Role-Based Access Control.*
 
-So, once the client is authorized, we simply add their `role` in the JWT payload and... they can't tamper it without us ( no priviledge escalation! ):
+So, once the client is authorized, we simply add their `role` in the JWT payload and... they can't tamper with it without us detecting it (no privilege escalation!):
 
 ```json
 {
@@ -198,7 +208,7 @@ So, once the client is authorized, we simply add their `role` in the JWT payload
 
 This is how we can "statelessly" enforce roles in our application.
 
-These `roles` map to `permissions` in the backend, which allows the user to perform certain action in their platforms.
+These `roles` map to specific permissions in the backend code, controlling exactly what buttons a user can click and what data they can see.
 
 ---
 ### Side Quest 3:  Critical Thinking: Why bother with Roles?
@@ -211,7 +221,7 @@ While technically possible, roles act as a crucial layer of abstraction for seve
 2.  **JWT Payload Size:** JWTs are sent in every HTTP header. Listing 100 individual permissions would significantly increase the request size, leading to higher latency and potential header-size limit issues.
 3.  **Business Logic Alignment:** Roles usually map to real-world job functions (e.g., "Accountant", "Moderator"). This makes the system easier for non-technical stakeholders to understand and audit.
 
-In complex systems, you might see a hybrid approach: **RBAC** for broad categorization and **ABAC** (Attribute-Based Access Control) for fine-grained, context-aware permissions (e.g., "User can edit *this specific* post because they are the owner").
+In complex systems (like AWS IAM), you often see a hybrid approach: **RBAC** for broad categories (Admin, User) and **ABAC** (Attribute-Based Access Control) for fine-tuning (e.g., "User can edit *this specific document* because their ID matches the `owner_id` field").
 
 ---
 
@@ -219,34 +229,117 @@ In complex systems, you might see a hybrid approach: **RBAC** for broad categori
 
 In modern frameworks (Java Spring Boot, NestJS, .NET), we can use declarative annotations to enforce these roles, keeping our business logic clean.
 
-**Example (Conceptual):**
+---
 
-```typescript
-// Only 'Admin' role can delete users
-@Roles('ADMIN')
-@Delete('/users/:id')
-deleteUser(id: string) {
-  return db.delete(id);
-}
+### Example
 
-// Any authenticated user can view profile
-@Authenticated()
-@Get('/profile')
-getProfile(user: User) {
-  return user.profile;
-}
+This is what you get from the client side:
+
+**HTTP Header**
+```http
+POST /api/provision/newInstance HTTP/1.1
+Host: my.company.com
+Content-Type: application/json
+Content-Length: 27
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InNhbXJpZGgudHVsYWRoYXJAZ21haWwuY29tIiwicm9sZXMiOlsicm9sZXMvY29tcHV0ZS5hZG1pbiIsInJvbGVzL25ldHdvcmtpbmcudXNlciJdLCJpYXQiOjE1MTYyMzkwMjJ9.tzLCV-7e3y33m48BC5v6WTSKSH1RvgJTHZzWzp_baew
 ```
 
-This works by using an **Interceptor** or **Middleware** that:
-1. Intercepts the request.
-2. Decodes and verifies the JWT.
-3. Reads the `@Roles` metadata.
-4. Checks if the `token.role` matches the required role.
-5. Either allows the request or throws `403 Forbidden`.
+**HTTP POST body**
+```
+{
+    "instanceName": "samridh-instance",
+    "instanceType": "t2.micro",
+    "instanceRegion": "us-east-1"
+}
+```
+---
+
+### Backend Logic
+
+The most trivial way is to have a function that does the verification of the JWT token and return the permissions allowed for the role, then check if the user has the required permission to perform the action.
+
+```java
+
+public boolean isJWTTokenValid(String token) {
+  return someFunctionThatVerifiesTheToken(token);
+}
+
+public Permission[] getPermissions(String token) {
+  return someFunctionThatReturnsPermissions(token);
+}
+
+public boolean hasPermission(Permission[] permissions, String requiredPermission) {
+  for (Permission p : permissions) {
+    if (p.name.equals(requiredPermission)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+  
+@PostMapping("/provision/newInstance")
+public String provisionNewInstance(@RequestHeader("Authorization") String authHeader, @RequestBody Instance instance) {
+  String token = authHeader.replace("Bearer ", "");
+
+  if (isJWTTokenValid(token)) {
+    Permission[] permissions = getPermissions(token);
+    if (hasPermission(permissions, "provision/newInstance")) {
+      functionToProvisionInstance(instance); 
+      return "Instance provisioned successfully";
+    } else {
+      return "User does not have permission to provision instance";
+    }
+  } else {
+    return "Invalid JWT token";
+  }
+}
+
+
+```
+
+But this isn't cool, nor is it the best way to do it. This causes a lot of boilerplate code.
+
+You should implement this using **Interceptors**, **Middleware**, **Aspect Oriented Programming (AOP)**, or **Decorators**.
+
+> **Interceptors**, **Middleware**, **AOP**, and **Decorators** are conceptually similar patterns used to handle cross-cutting concerns (like checking a token). Pick your weapon of choice:
+
+| Pattern Name | Common Ecosystem |
+|:---|:---|
+| **Interceptors** | Java Spring Boot, gRPC |
+| **Middleware** | Node.js Express, Go Gin |
+| **AOP** | Java (Spring AOP), .NET |
+| **Decorators** | Python (Flask/Django), TypeScript (NestJS) |
+
+Keep the previous functions that you have used. Simply upgrade them to annotations that can be used everywhere. Converting a function to an annotation isn't covered in this repository as it's not strictly a security topic, so you're on your own for that part!
+
+this is the final code base that you should be having ( the first three functions remain intact ):
+
+```java
+
+@PostMapping("/provision/newInstance")
+@Authorized(permissions = "provision.instances")
+public String provisionNewInstance(@RequestBody Instance instance) {
+  functionToProvisionInstance(instance); 
+  return "Instance provisioned successfully";
+ 
+}
+
+```
+
+The `@Authorized` annotation is a custom annotation that is used to enforce role-based access control. It is used to specify the permissions that are required to access a particular resource, and it should handle all the work of the three functions in one shot.
+
+This is a very basic example of how to use the `@Authorized` annotation, and it can be used in many different ways.
+
+Since this documentation was made only for security related documentations, I am skipping out on the details of creating a proper production grade RBAC system, and just sticking to theory.
+
+Consider annotations as magical wrappers—they're powerful, but if you don't understand the underlying AOP proxy mechanism, you might accidentally bypass security! Always test your "unauthorized" paths as rigorously as your "authorized" ones.
 
 ---
 
-> **But what if the token is stolen?**
+## The Achilles' Heel of Statelessness: Stolen Tokens
+
+Here is the scary part.
 
 
 If a token is stolen, the thief can impersonate the user until the token expires. Since the server is stateless, it doesn't "know" the token was stolen—it only knows the signature is valid.
