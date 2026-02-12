@@ -404,7 +404,13 @@ Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3O
 
 "It's valid for 15 minutes," Anaya said, her fingers flying across her deck. "If we use it, the server won't know it's *us* using it. It just sees a valid wristband."
 
+"Wait," Vikram paused. "What if they have **Sender Constraints**? If they're using **DPoP**, we can't use this. We don't have Kael's private key."
+
+Anaya grinned, a sharp, dangerous look. "That's the beauty of legacy systems. The drone grid hasn't been upgraded to DPoP yet. It's still using standard Bearer tokens."
+
 **The Attack:**
+
+Time was ticking. 14 minutes remaining.
 
 Anaya crafted a new request. She didn't use her credentials. She didn't try to log in. She simply attached the stolen wristband to her command.
 
@@ -415,7 +421,7 @@ curl -X POST https://api.syndicate.net/v1/transfer \
 ```
 
 **Understanding the Vulnerability:**
-Because the server is **Stateless**, it doesn't check *where* the request came from. It doesn't check if Kael is actually sitting at that computer. It only checks:
+Because the server is **Stateless** and **Not Sender Constrained**, it doesn't check *where* the request came from. It doesn't ask for a Proof-of-Possession. It only checks:
 1.  Is the Signature valid? **YES.** (It was signed by the Syndicate).
 2.  Is the Token expired? **NO.** (It has 14 minutes left).
 3.  Does the Token have the 'admin' role? **YES.**
@@ -427,9 +433,11 @@ The screen blinked.
 **> AUTHORIZATION SUCCESSFUL.**
 **> TRANSFER COMPLETE.**
 
-Vikram watched the credits drain from the Syndicate's account. "They trusted the token more than the user."
+Vikram watched the credits drain from the Syndicate's account. "They trusted the token more than the user. We got lucky they haven't patched the grid."
 
-"That," Anaya said, closing her laptop as sirens began to wail in the distance, "is the Achilles' Heel of statelessness. If you lose your keys, you change the lock. But if you lose your token... anyone can be you."
+"That," Anaya said, closing her laptop as sirens began to wail in the distance, "is the Achilles' Heel of simple statelessness. If you lose your keys, you change the lock. But if you lose your token... anyone can be you."
+
+"For now," Vikram muttered, glancing at his damaged arm. "Next time, they'll demand a signature."
 
 They vanished into the neon rain, 1 billion credits richer—and a hell of a lot wiser.
 
