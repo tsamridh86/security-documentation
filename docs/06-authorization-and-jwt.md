@@ -13,7 +13,6 @@ Up until now, we've mostly discussed encryption and trust (Authentication). Now,
 In a stateful architecture, the server is responsible for tracking the state of a client's interaction. This usually involves storing data about the current session in a database or cache (like Redis) and associating it with a unique identifier sent to the client.
 *   **Example:** A shopping cart on an e-commerce site. When you add an item, the server stores that state in its memory or a database. As you navigate between pages, the server uses your session ID to retrieve your specific cart, ensuring your items remain saved.
 
-
 *   **The Scaling Problem:** Every incoming request requires a lookup to retrieve the state, which can introduce latency. In a distributed system, maintaining a synchronized state across multiple servers or regions becomes a complex infrastructure challenge, often requiring "sticky sessions" or a shared data store.
 
 ### Stateless Applications
@@ -22,55 +21,90 @@ Statelessness means the server does not store any information about the client's
 *   **Why we use it:** It enables effortless horizontal scaling. Because the server doesn't need to remember anything between requests, any instance of the application can handle any request. This decoupling is essential for microservices and high-concurrency environments where performance and reliability are critical.
 
 
+---
 
+### How do we solve this?
+To achieve statelessness, the client must take responsibility for holding the necessary context and presenting it with every single request. In modern web applications, the most consistent way to handle this is by using a **Token**.
+
+```json
+{
+  "user_info": {
+    "user_id": 42,
+    "user_name": "sam",
+    "current_page" : "dashboard",
+    "items_in_cart" : 2,
+    "items" : [ 
+      {"id": 1, "name": "paper"},
+      {"id": 2, "name": "pen"}
+       ],
+    "logged_in" : "2026-02-12T10:08:33+05:30"
+  }
+}
+```
+
+
+Instead of the server maintaining a list of active sessions or interactions, it issues a token to the client. The client stores this token (usually in `localStorage` or an `HttpOnly` cookie) and attaches it to every subsequent request. This allows the server to process the request immediately using only the information provided in the token, without needing to query a central database for the user's current state.
+
+An alarm bell might go off if your mind is already whirring with questions like when i apply this to a authz scenario, then :
+
+> "What if the token is modified by the client themselves" 
+
+or 
+> "What if the token is stolen?" 
+
+or
+> "How do we invalidate a token?".
+
+The answer to above problems is to use a special type of token called a **JWT** (JSON Web Token).
+
+## JWT
+A "Token" is a broad concept. It could be a random string of characters, an encrypted blob, or a json body but JWT is a special type of token that is compact, URL-safe, and can be used to represent claims to be transferred between two parties.
+
+
+> **JWT has a lot of benefits, but the main power of JWT is that it cannot be tampered!**
 
 ---
 
-## What is a JWT?
+## Creating a Token & Play around with it
 
-JWT (JSON Web Token) is a compact, URL-safe means of representing claims to be transferred between two parties.
+Go to the website [jwt.io](https://jwt.io)
 
-It consists of three parts separated by dots (`.`):
+Immediately, you will be thrown into the "decoder" page - this is to debug an existing token ( which we will do so later) but we are here to create a token, so let's click on the "encoder" tab.
+
+You will see 3 sections here :
+
+1. **Header**: Algorithm & Token Type. ( Do not tamper this for now)
+2. **Payload**: The data (Claims) - you can fill this up with any json body you wish.
+3. **Sign JWT: Secret**: You are supposed to fill this up with a secret key. 
+
+Once you fill up the above sections, you will see a token generated.
+
+This has 3 parts separated by dots (`.`):
+
 1. **Header**: Algorithm & Token Type.
 2. **Payload**: The data (Claims).
 3. **Signature**: Verifies the token hasn't been tampered with.
 
+Essentially,
 $$
-token = base64(header) + "." + base64(payload) + "." + signature
+jwt\_token = base64(header) + "." + base64(payload) + "." + signature
 $$
+where,
+$$
+signature = hash(base64(header) + "." + base64(payload), secret)
+$$
+
+This is the most simple JWT token that you can create.
+
+You create the token, which has the "state" of the client. The client stores this token and sends it with every request. If the client modifies it you will get to know immediately!
+
+> You can have your friend create a JWT token and you can place it in the **decoder** section now. Although you can read what he had kept in the body, you cannot modify it. If you return the same token to your friend, he will know if you have modified it. 
+
+**This strongly implies, you should NEVER store any sensitive information in the token.**
 
 ---
 
-## Creating a Token
-
-### 1. Symmetric Signature (HMAC / HS256)
-This uses a single secret key. The server signs the token with a secret, and later verifies it with the same secret. Fast and simple, but the secret must be kept safe.
-
-```javascript
-/* Pseudocode */
-// SIGNING
-signature = HMACSHA256(
-  base64UrlEncode(header) + "." + base64UrlEncode(payload),
-  "my_secret_key"
-)
-```
-
-### 2. Asymmetric Signature (RSA / RS256)
-This uses a Key Pair (Private/Public), just like we learned in [Chapter 3](./03-rsa-and-asymmetric.md).
-- **Sign** with the **Private Key** (Auth Service).
-- **Verify** with the **Public Key** (Any Microservice).
-
-This is powerful for distributed systems. The Auth server holds the private key and issues tokens. Other services only need the public key to verify the token is valid; they cannot forge new tokens.
-
----
-
-## Why is JWT required?
-
-1. **Statelessness**: The server doesn't need to store a session ID in a database (like Redis). The token itself contains all the user info (`user_id`, `role`, `expiry`).
-2. **Scalability**: Since there is no database lookup to check if a user is logged in, you can scale your services horizontally easily.
-3. **Cross-Domain / Microservices**: Pass the token between services effortlessly.
-
-### Side Quest: What does "Stateless" actually mean?
+### Side Quest 1: What does "Stateless AuthZ" actually mean?
 
 To understand "stateless," we must first look at the "stateful" alternative: **Sessions**.
 
@@ -95,9 +129,63 @@ Imagine a club with stamped wristbands.
 
 ---
 
-## Roles and Permissions (RBAC)
+## Side quest 2 
 
-We usually include a `role` or `permissions` claim in the JWT payload:
+> You didn't allow me to tamper the first section of the token. Why?
+
+The answer is : too keep things simple for now. Let's complicate our lives a bit.
+
+So far, we have proven that JWT can be handed out to anyone and only YOU can tell apart if it's been modified or not. 
+
+> But what if you want multiple people to verify that token hasn't been modified?
+
+This is where you will change the first section, but default, it must show these values 
+
+```json
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+```
+
+modify it to 
+
+```json
+{
+  "alg": "RS256",
+  "typ": "JWT"
+}
+```
+
+The third section will automatically changes from `secret key` to `private key`.
+
+Plugin a private key that you had learnt to create from [chapter 3](./03-asymmetric-cryptography.md). 
+
+You will see that a new token is generated, if you move this to the decoder section now, then you will need a public key to verify it now.
+
+So, this is what you do :
+
+1. Generate the JWT token using your private key.
+2. Send it to your client.
+3. Put your public key in a well known place e.g., `https://your.company.com/.well-known/jwks.json`.
+4. Now your friend who runs a different company can be sure that the token was generated by you and not by someone else.
+
+These is extremely handy in microservices architecture as well as in multi-functional organization. 
+
+e.g.,
+
+you can login into the core banking website and then you can switch to it's insurance section with the same token, you will not require to login over and over again. 😁
+
+Congratulations, you just learnt **Asymmetric JWT**!
+
+---
+
+## Alright, enough distractions, let's get back to the main topic : Roles and Permissions (RBAC)
+
+
+> *RBAC stands for Role-Based Access Control.*
+
+So, once the client is authorized, we simply add their `role` in the JWT payload and... they can't tamper it without us ( no priviledge escalation! ):
 
 ```json
 {
@@ -108,7 +196,26 @@ We usually include a `role` or `permissions` claim in the JWT payload:
 }
 ```
 
-### Implementing with Annotations
+This is how we can "statelessly" enforce roles in our application.
+
+These `roles` map to `permissions` in the backend, which allows the user to perform certain action in their platforms.
+
+---
+### Side Quest 3:  Critical Thinking: Why bother with Roles?
+
+One might ask: *Can't we just list every specific permission (e.g., `create_user`, `edit_post`, `delete_report`) directly in the JWT for each user?*
+
+While technically possible, roles act as a crucial layer of abstraction for several reasons:
+
+1.  **Maintainability:** If your application has 50 different permissions and 10,000 users, managing individual mappings is a nightmare. With roles, you update the permissions for the `Editor` role once, and it immediately applies to all 500 editors.
+2.  **JWT Payload Size:** JWTs are sent in every HTTP header. Listing 100 individual permissions would significantly increase the request size, leading to higher latency and potential header-size limit issues.
+3.  **Business Logic Alignment:** Roles usually map to real-world job functions (e.g., "Accountant", "Moderator"). This makes the system easier for non-technical stakeholders to understand and audit.
+
+In complex systems, you might see a hybrid approach: **RBAC** for broad categorization and **ABAC** (Attribute-Based Access Control) for fine-grained, context-aware permissions (e.g., "User can edit *this specific* post because they are the owner").
+
+---
+
+## Verifying tokens in code the modern way
 
 In modern frameworks (Java Spring Boot, NestJS, .NET), we can use declarative annotations to enforce these roles, keeping our business logic clean.
 
@@ -138,5 +245,15 @@ This works by using an **Interceptor** or **Middleware** that:
 5. Either allows the request or throws `403 Forbidden`.
 
 ---
+
+> **But what if the token is stolen?**
+
+
+If a token is stolen, the thief can impersonate the user until the token expires. Since the server is stateless, it doesn't "know" the token was stolen—it only knows the signature is valid.
+
+To minimize risk, we use:
+- **Short Expiration (`exp`):** Keep access tokens alive for only a few minutes (e.g., 15 mins).
+- **Refresh Tokens:** A long-lived token used to issue new access tokens. These are typically stored in a database, allowing you to "revoke" a session by deleting the refresh token.
+- **HTTPS:** Ensures the token isn't intercepted during transmission via Man-in-the-Middle attacks.
 
 [**← Previous: PKIs & HTTPS**](./05-pkis-and-https.md) | [**🏠 Home**](../README.md)
