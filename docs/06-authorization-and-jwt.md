@@ -337,16 +337,27 @@ Consider annotations as magical wrappers—they're powerful, but if you don't un
 
 ---
 
-## The Achilles' Heel of Statelessness: Stolen Tokens
+## The Achilles' Heel of Statelessness: Stolen Tokens or Replayed Tokens
 
 Here is the scary part.
 
 
-If a token is stolen, the thief can impersonate the user until the token expires. Since the server is stateless, it doesn't "know" the token was stolen—it only knows the signature is valid.
+If a token is stolen or replayed, the thief can impersonate the user until the token expires. Since the server is stateless, it doesn't "know" the token was stolen—it only knows the signature is valid.
 
-To minimize risk, we use:
-- **Short Expiration (`exp`):** Keep access tokens alive for only a few minutes (e.g., 15 mins).
-- **Refresh Tokens:** A long-lived token used to issue new access tokens. These are typically stored in a database, allowing you to "revoke" a session by deleting the refresh token.
-- **HTTPS:** Ensures the token isn't intercepted during transmission via Man-in-the-Middle attacks.
+To mitigate the risk of token theft and replay attacks without reintroducing server-side state, we utilize cryptographic and temporal constraints:
+
+#### 1. Short-Lived Access Tokens (`exp`)
+The primary stateless defense is minimizing the `exp` (expiration) window.
+*   **Mechanism:** Access tokens are issued with a short lifespan (e.g., 5–10 minutes).
+*   **Refresh Tokens:** To maintain user sessions, a long-lived Refresh Token is used to request new Access Tokens. This ensures that an intercepted Access Token has a very limited window of utility.
+
+#### 2. Sender Constrained Tokens (DPoP)
+**Demonstration of Proof-of-Possession (DPoP)** binds the JWT to the client's cryptographic identity, making the token non-transferable.
+*   **Step 1:** The client generates an asymmetric key pair and provides the public key to the server during token issuance.
+*   **Step 2:** The server embeds a thumbprint of this public key in the JWT (the `cnf` claim).
+*   **Step 3:** For every request, the client generates a "DPoP proof"—a unique, short-lived JWT signed by their private key that covers the specific HTTP method and target URI.
+*   **Step 4:** The resource server verifies that the signature on the
+
+---
 
 [**← Previous: PKIs & HTTPS**](./05-pkis-and-https.md) | [**🏠 Home**](../README.md)

@@ -319,4 +319,123 @@ Because they had authenticated so perfectly, the Mainframe knew *exactly* who wa
 
 This time, the encryption couldn't save them.
 
-**AuthZ is still pending...**
+---
+
+## Chapter 7: The Hard Reset (AuthZ vs AuthN)
+
+*The sewers beneath Budwar Peth. 03:00 Hours.*
+
+Vikram stumbled, his heavy carbon-fiber arm sparking against the damp brickwork. Smoke still rose from his shoulder joint—a souvenir from the Syndicate's Hunter-Seeker drone that had blown apart their rooftop position.
+
+Anaya dragged him into a maintenance alcove. "Stop. We need to stabilize that servo."
+
+"We lost the Faraday Cafe," Vikram gritted out, the pain evident in his voice. "Rojan is gone. The equipment is slag. And for what? We *had* the connection. We *had* the tunnel."
+
+"We had **Authentication**," Anaya corrected, ripping a piece of her sleeve to bind his arm. "We proved *who* we were. But we didn't prove *what* we were allowed to do."
+
+Vikram slumped against the wall. "I don't get it. We had the ID card. The Certificate."
+
+"Imagine a club," Anaya said, her voice echoing in the tunnel. "The bouncer at the door checks your ID. That's **Authentication (AuthN)**. You're Vikram. You're allowed inside."
+
+"Okay..."
+
+"But inside the club, there's a VIP area. The bouncer at *that* rope doesn't care who you are. He cares if you're on the *list*. That's **Authorization (AuthZ)**. The Mainframe knew we were 'Anaya_Rao'. But 'Anaya_Rao' isn't on the list for 'Transfer 1 Billion'."
+
+"So we failed because we didn't check the guest list," Vikram spat.
+
+"It's worse," Anaya said, pulling up a schematic on her cracked wrist-comp. "The Mainframe is **Stateless**. It doesn't keep a guest list at the door."
+
+---
+
+## Chapter 8: The Golden Ticket (JWT)
+
+"To understand how to beat them," Anaya explained, "You have to understand how they think. The Syndicate uses **Stateless Architecture**."
+
+ **The Ledger vs. The Wristband**
+
+"In the old days (Stateful)," Anaya began, projecting a hologram into the sludge, "The server kept a ledger (Session ID). Every time you asked for something, it checked its book."
+
+*   **Stateful:** 
+    *   Client: "I'm Session #99."
+    *   Server: *Checks memory.* "Ah, #99 is Anaya. She is logged in."
+
+"But the Syndicate is too big for ledgers. They have thousands of servers. They can't sync a ledger across all of them fast enough. So they use **Tokens**."
+
+*   **Stateless:**
+    *   Client: "Here is my Token (Wristband). It says I am Anaya and I am Admin."
+    *   Server: *Reads Token.* "Signed by the Boss? Okay, come in."
+
+"This token," Anaya pointed to a jagged string of characters, "is a **JSON Web Token (JWT)**."
+
+It looked like three colors of noise separated by dots:
+`Header.Payload.Signature`
+
+**1. The Header (Red):** "Says 'I am a JWT signed with RS256'."
+**2. The Payload (Purple):** "The data. 'User: Rajan', 'Role: Syndicate_Admin'."
+**3. The Signature (Blue):** "The wax seal. Proof that the Syndicate itself created this token."
+
+Vikram's eyes narrowed. "So we don't need to hack the database to change our permissions. We just need to show up wearing the right wristband."
+
+"Exactly," Anaya smiled, a dangerous glint in her eyes. "We can't forge a signature—we don't have their private key. But we don't *need* to forge it."
+
+"We just need to steal one from someone who already has it."
+
+---
+
+## Chapter 9: The Replay
+
+*The Skywalk, Deccan Gymkhana. 06:00 Hours.*
+
+The target was Lieutenant Kael, a mid-level Syndicate enforcer known for his arrogance—and his high-clearance access. He sat at a high-end terminal, sipping synthetic coffee, managing drone deployments.
+
+"He's transmitting," Anaya whispered from the shadows. "He's authorizing drone repairs. That requires Admin privileges."
+
+Vikram aimed his sniffers not at the encrypted tunnel (which they couldn't break), but at the **endpoint** where Kael's personal link connected to the local mesh. It was a momentary lapse in Kael's opsec.
+
+**Sniffer Output:**
+
+```http
+POST /api/drones/deploy HTTP/1.1
+Host: api.syndicate.net
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkthZWwiLCJyb2xlIjoic3luZGljYXRlX2FkbWluIiwiaWF0IjoxNTE2MjM5MDIyfQ.Sw5...[truncated]...
+```
+
+"Got it," Vikram hissed. "The **Bearer Token**."
+
+"It's valid for 15 minutes," Anaya said, her fingers flying across her deck. "If we use it, the server won't know it's *us* using it. It just sees a valid wristband."
+
+**The Attack:**
+
+Anaya crafted a new request. She didn't use her credentials. She didn't try to log in. She simply attached the stolen wristband to her command.
+
+```bash
+curl -X POST https://api.syndicate.net/v1/transfer \
+  -H "Authorization: Bearer eyJhbGciOiJSUzI1NiIs..." \
+  -d '{"amount": 1000000000, "to": "Resist_Wallet_77"}'
+```
+
+**Understanding the Vulnerability:**
+Because the server is **Stateless**, it doesn't check *where* the request came from. It doesn't check if Kael is actually sitting at that computer. It only checks:
+1.  Is the Signature valid? **YES.** (It was signed by the Syndicate).
+2.  Is the Token expired? **NO.** (It has 14 minutes left).
+3.  Does the Token have the 'admin' role? **YES.**
+
+**The Result:**
+
+The screen blinked.
+
+**> AUTHORIZATION SUCCESSFUL.**
+**> TRANSFER COMPLETE.**
+
+Vikram watched the credits drain from the Syndicate's account. "They trusted the token more than the user."
+
+"That," Anaya said, closing her laptop as sirens began to wail in the distance, "is the Achilles' Heel of statelessness. If you lose your keys, you change the lock. But if you lose your token... anyone can be you."
+
+They vanished into the neon rain, 1 billion credits richer—and a hell of a lot wiser.
+
+**Network secured. Authorization granted.**
+
+---
+
+> **The End?** 
+> *Security is never finished. It is only improved.*
