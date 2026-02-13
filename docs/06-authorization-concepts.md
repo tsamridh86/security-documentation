@@ -126,6 +126,7 @@ When you create a token, you should encapsulate the "state" of the client. The c
 To understand "stateless," we must first look at the "stateful" alternative: **Sessions**.
 
 **1. The Stateful Way (The Amnesiac Receptionist with a Ledger)**
+
 Imagine a club where the bouncer has zero memory of faces.
 - When you enter, he writes your name in a giant ledger: "Samridh is inside."
 - He hands you a ticket `#123`.
@@ -134,6 +135,7 @@ Imagine a club where the bouncer has zero memory of faces.
 - **The Problem:** If the club gets huge and you have 10 bartenders, they all need to constantly check that *one* ledger. The line at the ledger becomes your bottleneck.
 
 **2. The Stateless Way (The VIP Wristband)**
+
 This time, the bouncer still has amnesia, but he's smarter.
 - When you enter, he checks your ID.
 - He doesn't write anything down. Instead, he stamps a **detailed wristband** (The JWT) that says: *"Name: Samridh, Status: VIP, Valid until: 4 AM"*.
@@ -148,7 +150,7 @@ This time, the bouncer still has amnesia, but he's smarter.
 
 ## Side Quest 2: Asymmetric Keys
 
-> You didn't allow me to tamper with the first section of the token in the previous chapter. Why?
+> You didn't allow me to tamper with the first section of the token in the previous section. Why?
 
 The answer: It was to keep things simple until now. Now let's complicate our lives a bit.
 
