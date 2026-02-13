@@ -17,14 +17,17 @@ This chapter covers the "Dirty Tricks" of the trade: **XSS**, **DDoS**, and **In
 
 Imagine you run a community notice board. People can pin notes on it.
 
+You expect people to pin notes like: 
 ```
-You expect people to pin notes like: "Lost Cat: Call 555-0199".
+"Lost Cat: Call 555-0199".
+```
 
 One day, an attacker pins a note that says:
+```
 "Free Pizza! Just scan this QR code to get your coupon."
+```
 
 But the code is a trap: as soon as you scan it, it secretly tells your phone to send your saved credit card details to the attacker.
-```
 
 **In Tech Terms:**
 Websites often display user input. If a user posts a comment, the website shows it to everyone else.
@@ -60,14 +63,16 @@ They hire 10,000 "zombies" to stand in line and order "a cup of hot water," then
 Real customers can't get in. The shop collapses under the load.
 
 **DoS (Denial of Service):** One attacker flooding a server.
+
 **DDoS (Distributed Denial of Service):** A botnet of millions of infected caught-devices (IoT fridges, webcams) flooding a server from all over the world.
 
 **The Fix: Rate Limiting**
+
 The Bouncer at the door counts how many times a person enters.
 *   "You can enter 5 times per minute."
 *   "If you try a 6th time, you get a 429 Too Many Requests error."
 
-**Google Cloud Armor Example:**
+**Google Cloud Armor Typical Config Example:**
 ```yaml
 - action: "throttle"
   priority: 1000
@@ -89,6 +94,7 @@ The Bouncer at the door counts how many times a person enters.
 
 ### SQL Injection (SQLi)
 Imagine a robot guard that takes orders.
+
 You are supposed to say: "Open door for [Name]."
 
 The Guard's programming is:
@@ -101,7 +107,9 @@ The Guard executes:
 
 The Guard opens the door... and then destroys the entire building.
 
-**Real World SQLi:**
+---
+
+### Real World SQLi
 
 **Vulnerable Query:**
 ```sql

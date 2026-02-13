@@ -507,4 +507,122 @@ But they were alive. And in Neo-Pune, that was the only currency that mattered.
 
 **Lesson:** Never trust input. Not even from a King.
 
+---
+
+## Chapter 11: The Zombie Horde (DDoS)
+
+*The Safehouse. 24 hours later.*
+
+They were broke, but they weren't dead. Anaya was rebuilding their rig from scrap parts while Vikram scanned the darknet for traces of **CyberKing_99**.
+
+"I found a signal," Vikram said. "A pingback from the script that stole our keys. It's coming from..."
+
+Suddenly, the lights flickered. The cooling fans on their server rack screamed to life, spinning at maximum RPM.
+
+"Traffic spike!" Anaya yelled, pulling up the net-monitor. "We're taking hits. 1,000 requests per second. 5,000. 10,000!"
+
+"Who is it? The Syndicate?"
+
+"No," Anaya's fingers blurred. "It's... toasters. And smart fridges. And web-connected lightbulbs."
+
+**The Attack:**
+
+**CyberKing_99** knew they were tracking him. He had unleashed a **DDoS (Distributed Denial of Service)** attack. He wasn't using his own computer; he was using a **Botnet**—millions of infected IoT devices executing a simple command:
+
+```bash
+while true; do curl http://anaya-vikram-safehouse.node; done
+```
+
+Their router was drowning. Legitimate traffic couldn't get through. They were being suffocated by junk data.
+
+"He's trying to knock us offline so we can't trace him," Vikram realized. "We need to block him."
+
+"We can't block an IP," Anaya shouted over the fan noise. "There are millions of different IPs! If we block the toaster, the fridge attacks. If we block the fridge, the thermostat attacks."
+
+**The Defense (Rate Limiting):**
+
+"We don't block the *source*," Vikram said, remembering the docs. "We block the *volume*."
+
+"A **Rate Limiter**," Anaya nodded. "A digital bouncer."
+
+She quickly coded a middleware rule for their gateway:
+
+```yaml
+limit:
+  request_rate: 10/second
+  burst: 20
+  action: REJECT (429 Too Many Requests)
+```
+
+**The Effect:**
+The server began dropping the requests.
+*   Smart Toaster #1: Sent 100 requests. **90 Dropped.**
+*   Smart Fridge #2: Sent 500 requests. **490 Dropped.**
+
+The noise subsided. The fans slowed down. The "Zombie Horde" was still banging on the door, but the bouncer was only letting them in one by one, making them harmless.
+
+"Traffic stabilized," Anaya exhaled. "We're back online."
+
+"And while he was busy trying to bury us," Vikram smiled, "I traced the command server. I know where **CyberKing_99** keeps his loot."
+
+---
+
+## Chapter 12: The Silver Tongue (SQL Injection)
+
+*The Counter-Attack.*
+
+The target was a database server hidden behind a sloppy web frontend: `admin.laundry-service.net`. It was the backend for **CyberKing_99**'s operation.
+
+"It's a login page," Vikram said. "Username and Password. We don't have either."
+
+"We don't need credentials," Anaya said, her eyes cold. "We just need to speak the language of the database."
+
+**The Vulnerability:**
+
+The backend code for the login page looked like this (in Anaya's mind):
+
+```sql
+SELECT * FROM admin_users WHERE username = '$user_input' AND password = '$password_input';
+```
+
+If the database found a row, it would log them in.
+
+**The Attack (SQLi):**
+
+Anaya didn't type a username. She typed a **Logic Statement**.
+
+**Username:** `admin' OR 1=1 --`
+**Password:** `(anything)`
+
+"The Silver Tongue," Vikram whispered. "You're tricking the interpreter."
+
+**What the Database Heard:**
+
+```sql
+SELECT * FROM admin_users WHERE username = 'admin' OR 1=1 --' AND password = '...';
+```
+
+1.  `'admin'`: Checks for user admin.
+2.  `OR 1=1`: **TRUE.** One always equals one.
+3.  `--`: **Comment**. Ignore everything after this (the password check).
+
+The query essentially became: **"Is the username admin? OR is 1 equal to 1?"**
+
+Since 1 is always 1, the answer was **YES**.
+
+**The Result:**
+
+**> WELCOME, ADMIN.**
+
+The dashboard opened. There, in the "Recent Transfers" table, was their 1 Billion credits, along with millions more stolen from others.
+
+"He sanitized his front door," Anaya said, "but he left his back door wide open."
+
+Vikram initiated the transfer. Not just their funds, but *all* the funds, redirecting them to a distributed charity algorithm that scattered the credits to thousands of needy wallets across Neo-Pune.
+
+"Network secure," Vikram said, closing the lid. "Credits recovered."
+
+"And lesson learned," Anaya added, looking at the sunrise over the smoggy city. "Encryption protects secrets. Auth protects access. But if you don't validate your inputs... you're just leaving the keys in the lock."
+
 > **THE END?**
+
