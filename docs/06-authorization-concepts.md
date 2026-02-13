@@ -108,10 +108,12 @@ $$
 signature = hash(base64(header) + "." + base64(payload), secret)
 $$
 
-
 This is the most simple JWT token that you can create.
 
-You create the token, which encapsulates the "state" of the client. The client stores this token and sends it with every request. If the client modifies it, you will know immediately!
+Watch it here :
+![jwt creation](../assets/jwt-create.gif)
+
+When you create a token, you should encapsulate the "state" of the client. The client stores this token and sends it back to you with every request. If the client modifies it, you will know immediately!
 
 > You can have a friend create a JWT and place it in the **decoder** section. Although you can read what they kept in the body, you cannot modify it. If you return the modified token to your friend, they will know if you have tampered with it.
 

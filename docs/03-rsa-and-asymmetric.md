@@ -19,11 +19,11 @@ Internal mathematics have been skipped for now.
 Mathematically, this is what the RSA algorithm does:
 
 $$
-cipher = rsa(msg, private\_key)
+cipher = rsa(msg, privateKey)
 $$
 
 $$
-msg = rsa(cipher, public\_key)
+msg = rsa(cipher, publicKey)
 $$
 
 > **Note**: A message encrypted by a private key can only be opened by the publicly available key. This establishes **Authenticity** -> Only one person on the planet could have written that message.
@@ -31,11 +31,11 @@ $$
 Conversely,
 
 $$
-cipher = rsa(msg, public\_key)
+cipher = rsa(msg, publicKey)
 $$
 
 $$
-msg = rsa(cipher, private\_key)
+msg = rsa(cipher, privateKey)
 $$
 
 > **Note**: A message encrypted by the public key can only be opened by the private key. This establishes **Confidentiality** -> Only one person in the world will ever read that message.
@@ -73,7 +73,7 @@ Thankfully, the creators of `openssl` had the same smart thinking. In `openssl`,
 This implies:
 
 $$
-    digitalSignature = rsa(hash(message), private\_key)
+    digitalSignature = rsa(hash(message), privateKey)
 $$
 
 > The command to generate a signature is left as an exercise.

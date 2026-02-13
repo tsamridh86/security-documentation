@@ -116,7 +116,7 @@ Vikram ran the simulation with simple numbers to be sure:
 *   $x = 8$ (Vikram's Secret)
 *   $y = 9$ (Node's Secret)
 
-![DFHKE](https://github.com/tsamridh86/security-documentation/blob/main/dhke.gif?raw=true)
+![DFHKE](assets/dhke.gif)
 
 1. Vikram sent $g^x \pmod p$ -> `70`
 2. Node sent $g^y \pmod p$ -> `80`
@@ -146,18 +146,18 @@ Vikram stared at his screen. "Connection Timeout."
 
 "To establish **Confidentiality** (Secrecy):"
 $$
-cipher = rsa(msg, public\_key)
+cipher = rsa(msg, publicKey)
 $$
 $$
-msg = rsa(cipher, private\_key)
+msg = rsa(cipher, privateKey)
 $$
 
 "To establish **Authenticity** (Identity):"
 $$
-cipher = rsa(msg, private\_key)
+cipher = rsa(msg, privateKey)
 $$
 $$
-msg = rsa(cipher, public\_key)
+msg = rsa(cipher, publicKey)
 $$
 
 "I'll encrypt the command with the Node's **Public Key** so only the Node can read it. And the Node will sign its responses with its **Private Key** so I know it's real."
@@ -260,7 +260,7 @@ Vikram's Deck: "Hello?"
 Node: "Here is my Certificate."
 Vikram's Deck: *Checks signature against The Rishi's Root.* **VALID.**
 
-![Checking certificate](https://github.com/tsamridh86/security-documentation/blob/main/certificate-check.gif?raw=true)
+![Checking certificate](assets/certificate-check.gif)
 
 **Step 2: The Tunnel**
 They performed the Diffie-Hellman exchange *inside* this authenticated session. The Overseer tried to interfere, but couldn't fake the certificate.

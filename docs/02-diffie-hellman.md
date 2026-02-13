@@ -77,7 +77,7 @@ x = 8      # private number of LHS
 y = 9      # private number of RHS
 ```
 
-![DFHKE](https://github.com/tsamridh86/security-documentation/blob/main/dhke.gif?raw=true)
+![DFHKE](../assets/dhke.gif)
 
 1. The LHS sends over `70`, not its secret `8`.
 2. The RHS sends over `80`, not its secret `9`.

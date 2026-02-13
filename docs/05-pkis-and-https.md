@@ -16,7 +16,7 @@ We have a list of people that we trust in the world. Their information is stored
 
 If we see the "digital signature" of a trusted CA on a website, then we trust the website.
 
-![Checking certificate of a website](https://github.com/tsamridh86/security-documentation/blob/main/certificate-check.gif?raw=true)
+![Checking certificate of a website](../assets/certificate-check.gif)
 
 ---
 
