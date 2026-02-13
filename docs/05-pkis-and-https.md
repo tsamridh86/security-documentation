@@ -134,6 +134,9 @@ sequenceDiagram
     end
 ```
 
+
+> Remember, in this case, the client is only certain who the server is - server is not certain who the client is! This should feel more akin to entering a normal store, you know the store is correct and legitimate, but the store doesn't know if you are going to purchase something or just browsing! Setting up two way certificate checks are only done in banking and high risk scenarios. This is called **"mTLS"** or **"two-way SSL"**. Your average website doesn't do two way SSL!
+
 ---
 
-[**← Previous: Hashing**](./04-hashing-and-signatures.md) | [**🏠 Home**](../README.md) | [**Next: Authorization & JWT →**](./06-authorization-and-jwt.md)
+[**← Previous: Hashing**](./04-hashing-and-signatures.md) | [**🏠 Home**](../README.md) | [**Next: Authorization Concepts →**](./06-authorization-concepts.md)

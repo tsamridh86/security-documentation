@@ -25,7 +25,7 @@ I have split the guide into focused chapters to make it easier to digest. You ca
 
 ### [2. The Key Exchange Problem (Diffie-Hellman)](./docs/02-diffie-hellman.md)
    - The weakness of a single key
-   - The "Paint Mixing" Trick (Modular Arithmetic)
+   - The "Mixing" Trick (Modular Arithmetic)
    - Diffie-Hellman Key Exchange Demo
 
 ### [3. Asymmetric Encryption (RSA)](./docs/03-rsa-and-asymmetric.md)
@@ -43,9 +43,22 @@ I have split the guide into focused chapters to make it easier to digest. You ca
    - Certificate Authorities (CAs) and CSRs
    - The full HTTPS Handshake workflow
 
-### [6. Authorization & JWTs](./docs/06-authorization-and-jwt.md)
-   - Symmetric vs Asymmetric Signatures
-   - Why JWT? (Statelessness)
-   - Roles, Permissions & Annotation-based Security
+### [6. Authorization Concepts](./docs/06-authorization-concepts.md)
+   - AuthN vs AuthZ
+   - Stateful vs Stateless
+   - Basic Token Concepts
+   - Simple JWT Structure (HS256)
+   - Asymmetric Keys (RS256)
+
+### [7. JWT Implementation & Security](./docs/07-jwt-implementation.md)
+   - Roles & Permissions (RBAC)
+   - Code Verification Examples
+   - Token Security (short-lived, DPoP)
+   - OAuth 2.0
+
+### [8. Other Forms of Attacks](./docs/08-other-forms-of-attacks.md)
+   - The Trojan Horse (XSS)
+   - The Zombie Horde (Rate Limiting & DDoS)
+   - The Silver Tongue (SQLi & Prompt Injection)
 
 ---
