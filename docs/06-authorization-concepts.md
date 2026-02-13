@@ -99,7 +99,7 @@ This new "token" has 3 parts separated by dots (`.`):
 Essentially,
 
 $$
-jwt\_token = base64(header) + "." + base64(payload) + "." + signature
+jwtToken = base64(header) + "." + base64(payload) + "." + signature
 $$
 
 where,
