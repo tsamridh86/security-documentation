@@ -97,13 +97,17 @@ This new "token" has 3 parts separated by dots (`.`):
 3. **Signature**: Verifies the token hasn't been tampered with.
 
 Essentially,
+
 $$
 jwt\_token = base64(header) + "." + base64(payload) + "." + signature
 $$
+
 where,
+
 $$
 signature = hash(base64(header) + "." + base64(payload), secret)
 $$
+
 
 This is the most simple JWT token that you can create.
 
