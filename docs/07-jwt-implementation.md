@@ -164,7 +164,8 @@ The primary stateless defense is minimizing the `exp` (expiration) window.
 *   **Refresh Tokens:** To maintain user sessions, a long-lived Refresh Token is used to request new Access Tokens. This ensures that an intercepted Access Token has a very limited window of utility.
 
 #### 2. Sender Constrained Tokens (DPoP)
-**Demonstration of Proof-of-Possession (DPoP)** binds the JWT to the client's cryptographic identity, making the token non-transferable.
+**Demonstration of Proof-of-Possession (DPoP)** binds the JWT to the client's cryptographic identity, making the token non-transferable. This is a nuclear option - often not implemented everywhere and only done on mobile banking apps.
+
 *   **Step 1:** The client generates an asymmetric key pair and provides the public key to the server during token issuance.
 *   **Step 2:** The server embeds a thumbprint of this public key in the JWT (the `cnf` claim).
 *   **Step 3:** For every request, the client generates a "DPoP proof"—a unique, short-lived JWT signed by their private key that covers the specific HTTP method and target URI.
