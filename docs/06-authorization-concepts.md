@@ -117,6 +117,8 @@ When you create a token, you should encapsulate the "state" of the client. The c
 
 > You can have a friend create a JWT and place it in the **decoder** section. Although you can read what they kept in the body, you cannot modify it. If you return the modified token to your friend, they will know if you have tampered with it.
 
+> Read the above formula very carefully! `base64` is **encoding NOT encryption!** *( Refer [chapter1](../01-introduction/01-introduction.md) for differences between them )*
+
 **This strongly implies: you should NEVER store any sensitive information in the token.**
 
 ---
@@ -193,6 +195,20 @@ This is extremely handy in microservices architecture as well as in multi-functi
 
 For example:
 You can log in to the core banking website and then switch to its insurance section with the same token; you will not be required to log in over and over again. 😁
+
+
+Watch me create the first jwt token :
+
+![jwt creation](../assets/jwt-rsa-create.gif)
+
+now, if you want to verify it, copy and paste the token that i've attached here : [jwt token that you saw online](../assets/demo.jwt)
+
+and here is the public key that i'll be using : [jwt public key](../assets/public-jwt.pem)
+
+follow along!
+
+![jwt public key validation](../assets/jwt-rsa-verify.gif)
+
 
 Congratulations, you just learned **Asymmetric JWT**!
 

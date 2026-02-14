@@ -4,6 +4,8 @@ Everything I know about digital security in one place!
 
 Digital security for engineering often seems daunting and difficult to deal with. That is why I've written this article: to make it accessible to everybody and keep it extremely practical, relating all the math, numbers, and certificates to real life.
 
+> Before you begin, all commands that are used are tested in `git bash` of Windows so that you can follow along! It's highly encouraged to follow along and ask questions or leave comments, or better yet - raise a PR to improve the documentation!
+
 ---
 
 ## 📖 The Story

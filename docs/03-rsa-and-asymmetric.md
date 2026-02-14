@@ -52,7 +52,7 @@ openssl rsa -pubout -in private.pem -out public.pem
 ```
 2. Encrypt a message with the public key:
 ```shell
-echo "Hello, RSA!" | openssl rsautl -encrypt -pubin -inkey public.pem -out encrypted.bin
+echo "Hello, RSA!" | openssl pkeyutl -encrypt -pubin -inkey public.pem -out encrypted.bin
 ```
 3. Have a look at the output:
 ```shell
@@ -60,8 +60,13 @@ openssl base64 -in encrypted.bin
 ```
 4. Decrypt the message with the private key:
 ```shell
-openssl rsautl -decrypt -inkey private.pem -in encrypted.bin
+openssl pkeyutl -decrypt -inkey private.pem -in encrypted.bin
 ```
+
+Watch it in live action :
+
+![rsa-creation](../assets/rsa-create.gif)
+
 ---
 
 > **Critical Thinking**: If I encrypt a message using the private key, and anyone can decrypt it using the publicly available key... why should I waste compute power encrypting large input messages?
