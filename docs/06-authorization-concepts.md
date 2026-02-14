@@ -193,8 +193,8 @@ So, this is what you do:
 
 This is extremely handy in microservices architecture as well as in multi-functional organizations. 
 
-For example:
-You can log in to the core banking website and then switch to its insurance section with the same token; you will not be required to log in over and over again. 😁
+> For example:
+> You can log in to the core banking website and then switch to its insurance section (which may have a completely different tech department in a large organization) **with the same token**; you will not be required to log in over and over again. 😁
 
 
 Watch me create the first jwt token :
