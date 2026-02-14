@@ -169,6 +169,8 @@ openssl genpkey -algorithm RSA -out node_private.pem -pkeyopt rsa_keygen_bits:20
 openssl rsa -pubout -in node_private.pem -out node_public.pem
 ```
 
+![RSA Key Generation](assets/rsa-create.gif)
+
 But Vikram hesitated. "How do I get the Implant's Public Key? If the Implant sends it to me, the Overseer could intercept it and send *his* fake Public Key instead."
 
 They were back to the trust problem.
@@ -374,9 +376,13 @@ It looked like three colors of noise separated by dots:
 **2. The Payload (Purple):** "The data. 'User: Rajan', 'Role: Syndicate_Admin'."
 **3. The Signature (Blue):** "The wax seal. Proof that the Syndicate itself created this token."
 
+![JWT Creation](assets/jwt-rsa-create.gif)
+
 Vikram's eyes narrowed. "So we don't need to hack the database to change our permissions. We just need to show up wearing the right wristband."
 
 "Exactly," Anaya smiled, a dangerous glint in her eyes. "We can't forge a signature—we don't have their private key. But we don't *need* to forge it."
+
+![JWT Verification](assets/jwt-rsa-verify.gif)
 
 "We just need to steal one from someone who already has it."
 
