@@ -2,6 +2,8 @@
 
 With the RSA algorithm, we are able to prove both authenticity and confidentiality of the message, but... 
 
+> *Quick side note : PKI stands for public key infrastructure, why infrastructure will be clear till then end*
+
 ---
 
 ## If I have never met you, how can I trust that you are who you say you are?
